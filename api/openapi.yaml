@@ -1,0 +1,846 @@
+openapi: "3.0.1"
+info:
+  title: "API Documentation"
+  version: "1.0"
+paths:
+  /users/register:
+    post:
+      summary: "register"
+      description: "register"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                  description: ""
+                judge:
+                  type: "integer"
+                  description: ""
+                student_id:
+                  type: "string"
+                  description: ""
+                teacher_id:
+                  type: "string"
+                  description: ""
+                userName:
+                  type: "string"
+                  description: ""
+                password:
+                  type: "string"
+                  description: ""
+                phoneNumber:
+                  type: "string"
+                  description: ""
+                email:
+                  type: "string"
+                  description: ""
+                subject:
+                  type: "string"
+                  description: ""
+                account:
+                  type: "string"
+                  description: ""
+                classroom:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/registerIdentify:
+    post:
+      summary: "registerIdentify"
+      description: "registerIdentify"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  description: ""
+                name:
+                  type: "string"
+                  description: ""
+                sex:
+                  type: "string"
+                  description: ""
+                age:
+                  type: "integer"
+                  description: ""
+                judge:
+                  type: "integer"
+                  description: ""
+                phoneNumber:
+                  type: "string"
+                  description: ""
+                IDNumber:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/login:
+    post:
+      summary: "login"
+      description: "login"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                  description: ""
+                judge:
+                  type: "integer"
+                  description: ""
+                student_id:
+                  type: "string"
+                  description: ""
+                teacher_id:
+                  type: "string"
+                  description: ""
+                userName:
+                  type: "string"
+                  description: ""
+                password:
+                  type: "string"
+                  description: ""
+                phoneNumber:
+                  type: "string"
+                  description: ""
+                email:
+                  type: "string"
+                  description: ""
+                subject:
+                  type: "string"
+                  description: ""
+                account:
+                  type: "string"
+                  description: ""
+                classroom:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/downLoad:
+    post:
+      summary: "downLoad"
+      description: "downLoad"
+      parameters:
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "userId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - "file"
+              type: "object"
+              properties:
+                file:
+                  type: "string"
+                  description: ""
+                  format: "binary"
+        required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/upload:
+    get:
+      summary: "upload"
+      description: "upload"
+      parameters:
+      - name: "userId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/getAll:
+    get:
+      summary: "selectAll"
+      description: "selectAll"
+      parameters:
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/getById:
+    get:
+      summary: "getByID"
+      description: "getByID"
+      parameters:
+      - name: "userId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/getTeachersBySubject:
+    get:
+      summary: "getTeachersBySubject"
+      description: "getTeachersBySubject"
+      parameters:
+      - name: "subject"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/getUsersIdentify:
+    get:
+      summary: "getStudentIdentify"
+      description: "getStudentIdentify"
+      parameters:
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "/userId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/getAllIdentify:
+    get:
+      summary: "selectAllIdentify"
+      description: "selectAllIdentify"
+      parameters:
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/getClassroomIdentify:
+    get:
+      summary: "selectAllClassroomIdentify"
+      description: "selectAllClassroomIdentify"
+      parameters:
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "classroom"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/deleteTeacherFile:
+    get:
+      summary: "deleteTeacherFile"
+      description: "deleteTeacherFile"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/delete:
+    post:
+      summary: "delete"
+      description: "delete"
+      parameters:
+      - name: "user_id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/deleteIdentify:
+    get:
+      summary: "deleteIdentify"
+      description: "deleteIdentify"
+      parameters:
+      - name: "user_id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/updateUser_id:
+    post:
+      summary: "update"
+      description: "update"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "user_id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/updateUsername:
+    post:
+      summary: "updateUsername"
+      description: "updateUsername"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "username"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/updatePassword:
+    post:
+      summary: "updatePassword"
+      description: "updatePassword"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "username"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/updateUserIdentify:
+    post:
+      summary: "updateUserIdentify"
+      description: "updateUserIdentify"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  description: ""
+                name:
+                  type: "string"
+                  description: ""
+                sex:
+                  type: "string"
+                  description: ""
+                age:
+                  type: "integer"
+                  description: ""
+                judge:
+                  type: "integer"
+                  description: ""
+                phoneNumber:
+                  type: "string"
+                  description: ""
+                IDNumber:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/updateUserEmail:
+    post:
+      summary: "updateUserEmail"
+      description: "updateUserEmail"
+      parameters:
+      - name: "userId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+  /users/updateUserFile:
+    post:
+      summary: "updateUserImage"
+      description: "updateUserImage"
+      parameters:
+      - name: "userId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      - name: "judge"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - "file"
+              type: "object"
+              properties:
+                file:
+                  type: "string"
+                  description: ""
+                  format: "binary"
+        required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties: {}
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+components:
+  schemas:
+    java.lang.Object:
+      type: "object"
+      properties: {}
+      description: ""

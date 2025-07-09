@@ -1,0 +1,39 @@
+spring:
+  profiles:
+    active: pro
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+server:
+  port: 81
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+server:
+  port: 82
+---
+spring:
+  config:
+    activate:
+      on-profile: pro
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mydatabase
+    username: root
+    password: M19790929
+file:
+  upload-dir: D:\java\code\idea program\TeachingAISystem\src\main\java\com\ccut\teachingaisystem\download\file\teacher
+myAi:
+  service:
+    ip: 100.125.67.31
+    port: :8000
+server:
+  port: 83
+mybatis:
+  type-handlers-package: com.ccut.teachingaisystem.config

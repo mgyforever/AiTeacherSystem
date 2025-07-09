@@ -1,0 +1,122 @@
+[
+  {
+    "question": "以下关于u-boot功能的描述，正确的是？",
+    "answers": [
+      "A. 仅用于加载Linux内核",
+      "B. 支持文件系统读写操作",
+      "C. 无法修改启动参数",
+      "D. 需依赖硬件抽象层（HAL）"
+    ],
+    "analysis": "u-boot是功能强大的Bootloader，不仅可加载内核，还支持通过命令行操作文件系统（如USB、NAND Flash）。选项A错误（可执行多种任务）；选项C错误（可通过命令修改参数）；选项D错误（u-boot直接与硬件交互，无需HAL）。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "嵌入式Linux系统中，根文件系统（rootfs）必须包含的目录是？",
+    "answers": [
+      "A. /home",
+      "B. /etc",
+      "C. /proc",
+      "D. /mnt"
+    ],
+    "analysis": "/etc目录存储系统配置文件，是根文件系统的必要组成部分。/home用于用户数据，/proc为虚拟文件系统，/mnt用于临时挂载，均非必需。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "在嵌入式Linux内核配置菜单中，`make localmodconfig`命令的作用是？",
+    "answers": [
+      "A. 清理编译缓存",
+      "B. 基于当前系统生成最小配置",
+      "C. 更新依赖关系",
+      "D. 编译内核镜像"
+    ],
+    "analysis": "`make localmodconfig`会根据当前系统已加载的模块生成最小化内核配置，适用于嵌入式设备精简需求。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "以下关于BusyBox的描述，错误的是？",
+    "answers": [
+      "A. 集成了多种Unix工具",
+      "B. 专为嵌入式系统设计",
+      "C. 支持动态链接",
+      "D. 可配置为init进程"
+    ],
+    "analysis": "BusyBox是静态链接的轻量级工具集，不支持动态链接，选项C错误。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "在ARM交叉编译环境中，`-march=armv7-a`选项的作用是？",
+    "answers": [
+      "A. 指定编译器优化级别",
+      "B. 禁用浮点运算",
+      "C. 设置目标架构为ARMv7",
+      "D. 启用NEON指令集支持"
+    ],
+    "analysis": "`-march=armv7-a`明确指定目标处理器架构为ARMv7，选项D需额外参数`-mfpu=neon`。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "嵌入式Linux启动流程中，DDR初始化通常由哪个阶段完成？",
+    "answers": [
+      "A. Bootloader",
+      "B. 内核启动阶段",
+      "C. 用户空间脚本",
+      "D. 设备树解析"
+    ],
+    "analysis": "Bootloader（如u-boot）负责初始化内存控制器（DDR）以满足内核运行的基本硬件环境。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "在Yocto项目中，`bitbake`命令的核心功能是？",
+    "answers": [
+      "A. 构建特定架构的镜像",
+      "B. 管理软件包依赖",
+      "C. 生成设备树文件",
+      "D. 编译内核模块"
+    ],
+    "analysis": "`bitbake`根据配方（recipe）构建目标架构的完整镜像，是Yocto的核心构建工具。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "以下关于Framebuffer的描述，正确的是？",
+    "answers": [
+      "A. 用于管理输入设备",
+      "B. 依赖X窗口系统",
+      "C. 可直接绘制图形",
+      "D. 属于块设备"
+    ],
+    "analysis": "Framebuffer是字符设备（/dev/fb0），提供显存抽象接口，可直接进行图形绘制，无需X服务器。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "在Qt嵌入式开发中，`qmake`与`make`的关系是？",
+    "answers": [
+      "A. qmake生成项目文件，make执行编译",
+      "B. qmake替换make进行编译",
+      "C. 两者功能完全独立",
+      "D. qmake仅用于配置环境"
+    ],
+    "analysis": "qmake根据.pro文件生成Makefile，后续调用make完成编译链接。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  },
+  {
+    "question": "嵌入式Linux系统中，`/dev/console`设备对应的物理设备通常是？",
+    "answers": [
+      "A. UART串口",
+      "B. VGA显示接口",
+      "C. USB控制台",
+      "D. 以太网接口"
+    ],
+    "analysis": "/dev/console默认映射到第一个UART串口，用于早期日志输出和交互。",
+    "subject": "",
+    "chapter": "嵌入式linux开发"
+  }
+]
