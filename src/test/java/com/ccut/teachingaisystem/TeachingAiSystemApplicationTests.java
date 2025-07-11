@@ -183,16 +183,16 @@ class TeachingAiSystemApplicationTests {
 //                , "1", "2025-06-17 17:57:17");
 //    }
 
-    @Test
-    void getTeacherFilePath() {
-        List<String> paths = usersDao.selectFileByTeacherId("1");
-        for (String path : paths) {
-            System.out.println(path.substring(105));
-        }
-        String s = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\java" +
-                "\\com\\ccut\\teachingaisystem\\download\\file\\teacher\\";
-        System.out.println(s.length());
-    }
+//    @Test
+//    void getTeacherFilePath() {
+//        List<String> paths = usersDao.selectFileByTeacherId("1");
+//        for (String path : paths) {
+//            System.out.println(path.substring(105));
+//        }
+//        String s = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\java" +
+//                "\\com\\ccut\\teachingaisystem\\download\\file\\teacher\\";
+//        System.out.println(s.length());
+//    }
 
     @Test
     void insertAiSource() {

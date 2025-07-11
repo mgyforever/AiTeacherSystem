@@ -429,14 +429,17 @@ public class TeacherServiceImpl implements TeacherService {
      * @return
      */
     @Override
-    public List<String> getTeacherAllFilesName(String teacher_id) {
+    public List<TeacherFile> getTeacherAllFilesName(String teacher_id) {
         try {
-            List<String> path = usersDao.selectFileByTeacherId(teacher_id);
-            List<String> filePath = new ArrayList<String>();
-            for (String path1 : path) {
-                filePath.add(path1.substring(105 + teacher_id.length()));
+            List<TeacherFile> teacherFiles = usersDao.selectFileByTeacherId(teacher_id);
+            List<String> filePath = new ArrayList<>();
+            for (TeacherFile path1 : teacherFiles) {
+                filePath.add(path1.getFile_path().substring(105 + teacher_id.length()));
             }
-            return filePath;
+            for (int i = 0; i < teacherFiles.size(); i++) {
+                teacherFiles.get(i).setFile_name(filePath.get(i));
+            }
+            return teacherFiles;
         } catch (Exception e) {
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());

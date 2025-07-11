@@ -263,8 +263,8 @@ public interface UsersDao {
     @Select("select * from ai_student_message where student_id = #{student_id}")
     StudentMessage selectMessageByStudentId(String student_id);
 
-    @Select("select file_path from ai_teacher_file where teacher_id = #{teacher_id} ")
-    List<String> selectFileByTeacherId(String teacher_id);
+    @Select("select * from ai_teacher_file where teacher_id = #{teacher_id} ")
+    List<TeacherFile> selectFileByTeacherId(String teacher_id);
 
     @Select("select file_path from ai_teacher_file where id = #{id}")
     String selectFileById(int id);

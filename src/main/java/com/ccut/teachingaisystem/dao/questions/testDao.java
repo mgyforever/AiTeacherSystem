@@ -172,9 +172,6 @@ public interface testDao {
             "and knowledge = #{knowledge} and classroom = #{classroom}")
     Integer[] selectIdByKnowledgeAndClassroom(String test_id, String knowledge, String classroom);
 
-    @Select("select id from ai_knowledge where name = #{name}")
-    int selectKnowledgeIdByName(String name);
-
     @Select("select classroom_num, year_num, classroom_rate, year_rate, knowledge " +
             "from ai_test_rate where test_id = #{test_id}")
     List<QuestionTestRate> selectTestKnowledgeRateByTestId(String test_id);

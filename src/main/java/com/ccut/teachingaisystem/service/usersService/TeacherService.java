@@ -1,9 +1,6 @@
 package com.ccut.teachingaisystem.service.usersService;
 
-import com.ccut.teachingaisystem.domain.users.StudentSubject;
-import com.ccut.teachingaisystem.domain.users.TeacherUsers;
-import com.ccut.teachingaisystem.domain.users.TempUsers;
-import com.ccut.teachingaisystem.domain.users.UsersIdentify;
+import com.ccut.teachingaisystem.domain.users.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -38,5 +35,5 @@ public interface TeacherService {
     boolean updateImage(String Teacher_id, MultipartFile file);
     boolean updateEmail(String TeacherId, String email);
     boolean updateTeacher(TeacherUsers teacherUsers);
-    List<String> getTeacherAllFilesName(String teacher_id);
+    List<TeacherFile> getTeacherAllFilesName(String teacher_id);
 }
