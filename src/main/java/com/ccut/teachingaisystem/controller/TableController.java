@@ -1,28 +1,62 @@
 package com.ccut.teachingaisystem.controller;
 
+import com.alibaba.excel.EasyExcel;
+import com.ccut.teachingaisystem.dao.LogDao;
+import com.ccut.teachingaisystem.domain.log.OperationLog;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 @Component
 public class TableController {
+    @Autowired
+    private LogDao logDao;
     private final JdbcTemplate jdbcTemplate;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public TableController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    // 每周日凌晨 0 点执行
-    @Scheduled(cron = "0 0 0 * * 0")
-    public void clearAi_test_student() {
-        jdbcTemplate.execute("TRUNCATE TABLE ai_test_student;");
-        System.out.println("Table cleared at: " + System.currentTimeMillis());
     }
 
     @Scheduled(cron = "0 0 0 31 12 ?")
     public void clearAi_previous_question() {
         jdbcTemplate.execute("TRUNCATE TABLE ai_previous_question;");
         jdbcTemplate.execute("TRUNCATE TABLE ai_blank_previous_question;");
+        jdbcTemplate.execute("TRUNCATE TABLE ai_test_student;");
         System.out.println("Table cleared at: " + System.currentTimeMillis());
+    }
+
+    // 每30天执行一次，测试可以改为每天（"0 0 0 * * ?" 表示每天0点）
+    @Scheduled(cron = "0 0 0 1 */1 ?") // 每月1号0点执行
+    public void archiveOldLogs() {
+        List<OperationLog> oldLogs = logDao.selectOperationLog();
+        if (oldLogs.isEmpty()) {
+            System.out.println("无旧日志需要归档。");
+            return;
+        }
+
+        // 构建文件名
+        String archiveDate = FORMATTER.format(LocalDateTime.now());
+        String fileName = "operation_log_archive_" + archiveDate + ".xlsx";
+        String path = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\java" +
+                "\\com\\ccut\\teachingaisystem\\download\\log" + fileName;
+
+        // 写入 Excel 文件
+        try {
+            EasyExcel.write(path, OperationLog.class)
+                    .sheet("归档日志")
+                    .doWrite(oldLogs);
+            System.out.println("已成功归档日志至：" + path);
+        } catch (Exception e) {
+            System.err.println("归档失败：" + e.getMessage());
+            return;
+        }
+
+        jdbcTemplate.execute("TRUNCATE TABLE operation_log;");
     }
 }

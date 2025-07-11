@@ -177,7 +177,7 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public boolean getChoiceQuestionsSync(String subject, String chapter, int choiceNum) {
+    public AiQuestions getChoiceQuestionsSync(String subject, String chapter, int choiceNum) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(1000, TimeUnit.SECONDS)  // 读取超时设为30秒
                 .connectTimeout(1000, TimeUnit.SECONDS)
@@ -209,16 +209,17 @@ public class AiServiceImpl implements AiService {
                         choiceQuestionDao.insertQuest(question);
                     }
                 }
+                return aiQuestions;
             }
         } catch (Exception e) {
-            String message = e.getMessage();
-            return false;
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
         }
-        return true;
+        return null;
     }
 
     @Override
-    public boolean getBlankQuestionsSync(String subject, String chapter, int choiceNum) {
+    public AiBlankQuestion getBlankQuestionsSync(String subject, String chapter, int choiceNum) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(1000, TimeUnit.SECONDS)  // 读取超时设为30秒
                 .connectTimeout(1000, TimeUnit.SECONDS)
@@ -249,12 +250,13 @@ public class AiServiceImpl implements AiService {
                         blankQuestionDao.insertQuest(question);
                     }
                 }
+                return aiBlankQuestion;
             }
         } catch (Exception e) {
-            String message = e.getMessage();
-            return false;
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
         }
-        return true;
+        return null;
     }
 
     @Override

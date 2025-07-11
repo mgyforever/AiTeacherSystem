@@ -65,11 +65,6 @@ public class OperationLogAspect {
         } finally {
             long elapsed = System.currentTimeMillis() - startTime;
             logRecord.setExecutionTimeMs(elapsed);
-
-            // ✅ 持久化到数据库或日志文件（以下为控制台打印）
-//            log.info("操作日志: {}", new ObjectMapper().writeValueAsString(logRecord));
-
-            // TODO: 调用 service 写入数据库，例如 logService.save(logRecord);
             logDao.insertOperationLog(logRecord);
         }
 

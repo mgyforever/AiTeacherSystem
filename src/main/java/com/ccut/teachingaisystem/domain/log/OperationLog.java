@@ -1,26 +1,55 @@
 package com.ccut.teachingaisystem.domain.log;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@SuppressWarnings("LombokSetterMayBeUsed")
 @Data
 public class OperationLog {
+    @ExcelProperty("IP地址")
     private String ipAddress;
+
+    @ExcelProperty("User-Agent")
     private String userAgent;
+
+    @ExcelProperty("请求路径")
     private String requestUri;
+
+    @ExcelProperty("请求方法")
     private String httpMethod;
+
+    @ExcelProperty("类名")
     private String className;
+
+    @ExcelProperty("方法名")
     private String methodName;
+
+    @ExcelProperty("请求参数")
     private String requestParams;
+
+    @ExcelProperty("响应数据")
     private String responseData;
+
+    @ExcelProperty("状态码")
     private Integer statusCode;
+
+    @ExcelProperty("是否成功")
     private Boolean success;
+
+    @ExcelProperty("异常名称")
     private String exceptionName;
+
+    @ExcelProperty("异常信息")
     private String exceptionMsg;
+
+    @ExcelProperty("执行时间(ms)")
     private Long executionTimeMs;
+
+    @ExcelProperty("操作时间")
     private LocalDateTime operationTime;
+
 
     public OperationLog() {
     }

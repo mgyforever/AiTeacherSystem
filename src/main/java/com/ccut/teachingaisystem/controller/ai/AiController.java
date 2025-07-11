@@ -4,6 +4,7 @@ import com.ccut.teachingaisystem.controller.Code;
 import com.ccut.teachingaisystem.controller.Result;
 import com.ccut.teachingaisystem.dao.AiDao;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTest;
+import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
 import com.ccut.teachingaisystem.service.AiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,29 @@ import java.io.IOException;
 @RequestMapping("/ai")
 public class AiController {
 
+    private final AiService aiService;
+
     @Autowired
-    private AiService aiService;
-    private String url;
-    private String teacherId;
-    @Autowired
-    private AiDao aiDao;
+    public AiController(AiService aiService) {
+        this.aiService = aiService;
+    }
+
+    /**
+     * 给ai添加新的科目
+     *
+     * @param subject
+     * @return
+     */
+    @PostMapping("/insertAiSource")
+    public Result insertAiSource(@RequestBody AiSourceSubject subject) {
+        try {
+            return aiService.insertAiSource(subject)
+                    ? new Result(Code.POST_OK, "添加成功!") :
+                    new Result(Code.POST_ERR, "添加失败!");
+        } catch (IOException e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
 
     /**
      * 学生端的建议
@@ -165,6 +183,46 @@ public class AiController {
                     : new Result(Code.POST_ERR, "查询失败!");
         } catch (IOException e) {
             return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
+     * 获取选择题
+     *
+     * @param subject
+     * @param chapter
+     * @param choiceNum
+     * @return
+     */
+    @GetMapping("/getChoiceQuestions")
+    public Result getChoiceQuestions(@RequestParam("subject") String subject, @RequestParam("chapter") String chapter
+            , @RequestParam("choiceNum") int choiceNum) {
+        try {
+            return aiService.getChoiceQuestionsSync(subject, chapter, choiceNum) != null ? new Result(Code.GET_OK
+                    , aiService.getChoiceQuestionsSync(subject, chapter, choiceNum), "查询成功!")
+                    : new Result(Code.GET_ERR, "查询失败!");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取填空题
+     *
+     * @param subject
+     * @param chapter
+     * @param choiceNum
+     * @return
+     */
+    @GetMapping("/getBlankQuestions")
+    public Result getBlankQuestions(@RequestParam("subject") String subject, @RequestParam("chapter") String chapter
+            , @RequestParam("choiceNum") int choiceNum) {
+        try {
+            return aiService.getBlankQuestionsSync(subject, chapter, choiceNum) != null ? new Result(Code.GET_OK
+                    , aiService.getBlankQuestionsSync(subject, chapter, choiceNum), "查询成功!")
+                    : new Result(Code.GET_ERR, "查询失败!");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

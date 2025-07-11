@@ -18,8 +18,8 @@ public interface UsersDao {
             ", #{phoneNumber}, #{email}, #{year}, #{professional})")
     int insertStudent(TempUsers tempUsers);
 
-    @Insert("insert into ai_teacher_users (teacher_id, password, phoneNumber, subject, email) " +
-            "VALUES (#{teacher_id}, #{password}, #{phoneNumber}, #{subject}, #{email})")
+    @Insert("insert into ai_teacher_users (teacher_id, password, phoneNumber, subject, email, year, professional) " +
+            "VALUES (#{teacher_id}, #{password}, #{phoneNumber}, #{subject}, #{email}, #{year}, #{professional})")
     int insertTeacherUsers(TempUsers tempUsers);
 
     @Select("select * from ai_student_users")

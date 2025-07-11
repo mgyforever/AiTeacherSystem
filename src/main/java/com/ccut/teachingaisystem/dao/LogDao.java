@@ -1,6 +1,9 @@
 package com.ccut.teachingaisystem.dao;
 
 import com.ccut.teachingaisystem.domain.log.OperationLog;
+import lombok.Cleanup;
+import lombok.Data;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

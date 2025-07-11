@@ -872,4 +872,20 @@ public class UserController {
             return new Result(Code.POST_ERR, "网络错误!");
         }
     }
+
+    /**
+     * 查询日志
+     *
+     * @return
+     */
+    @GetMapping("/getLog")
+    public Result getLog() {
+        try {
+            return managerService.getAllOperationLog() != null ? new Result(Code.GET_OK
+                    , managerService.getAllOperationLog(), "查询成功!")
+                    : new Result(Code.GET_ERR, "查询失败!");
+        } catch (Exception e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
 }

@@ -12,6 +12,8 @@ import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTestP
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTestQuestions;
 import com.ccut.teachingaisystem.domain.question.analysis.MyResponseBody;
 import com.ccut.teachingaisystem.domain.question.analysis.Test;
+import com.ccut.teachingaisystem.domain.question.blank.AiBlankQuestion;
+import com.ccut.teachingaisystem.domain.question.pub.AiQuestions;
 import com.ccut.teachingaisystem.domain.question.pub.ChoiceAndBlankQuestion;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +24,8 @@ import java.util.List;
 public interface AiService {
     boolean insertAiSource(AiSourceSubject subject) throws IOException;
     List<String> getPPTUrl(String topic, String teacherId);
-    boolean getChoiceQuestionsSync(String subject, String chapter, int choiceNum);
-    boolean getBlankQuestionsSync(String subject, String chapter, int choiceNum);
+    AiQuestions getChoiceQuestionsSync(String subject, String chapter, int choiceNum);
+    AiBlankQuestion getBlankQuestionsSync(String subject, String chapter, int choiceNum);
     MyResponseBody getAnalysisSync(List<Test> tests);
     AiStudentFeedback getStudentAnalysisSync(String student_id, String subject) throws IOException;
     AiStudentPercent getStudentPercentSync(String student_id, String subject) throws IOException;
