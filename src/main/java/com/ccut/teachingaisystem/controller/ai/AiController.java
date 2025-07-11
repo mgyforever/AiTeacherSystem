@@ -7,9 +7,11 @@ import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTest;
 import com.ccut.teachingaisystem.service.AiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@SuppressWarnings("JavadocDeclaration")
 @RestController
 @RequestMapping("/ai")
 public class AiController {
@@ -51,6 +53,12 @@ public class AiController {
         }
     }
 
+    /**
+     * 教师端对于每个学生的反馈
+     *
+     * @param teacherId
+     * @return
+     */
     @GetMapping("/getTeacherFeedback")
     public Result getTeacherFeedback(@RequestParam("teacherId") String teacherId) {
         try {
@@ -62,6 +70,12 @@ public class AiController {
         }
     }
 
+    /**
+     * 教师端对每个学生做题的错误率
+     *
+     * @param teacherId
+     * @return
+     */
     @GetMapping("/getTeacherPercent")
     public Result getTeacherPercent(@RequestParam("teacherId") String teacherId) {
         try {
@@ -73,6 +87,15 @@ public class AiController {
         }
     }
 
+    /**
+     * 获取PPT的大纲
+     *
+     * @param subject
+     * @param chapter
+     * @param teacher_id
+     * @param time
+     * @return
+     */
     @GetMapping("/getPPTText")
     public Result getPPTText(@RequestParam("subject") String subject, @RequestParam("chapter") String chapter
             , @RequestParam("teacher_id") String teacher_id, @RequestParam("time") String time) {
@@ -85,6 +108,13 @@ public class AiController {
         }
     }
 
+    /**
+     * 生成PPT
+     *
+     * @param url
+     * @param teacher_id
+     * @return
+     */
     @GetMapping("/getPPT")
     public Result getPPT(@RequestParam("url") String url, @RequestParam("teacher_id") String teacher_id) {
         try {
@@ -96,6 +126,14 @@ public class AiController {
         }
     }
 
+    /**
+     * 自动组卷
+     *
+     * @param subject
+     * @param questionNum
+     * @param points
+     * @return
+     */
     @GetMapping("/autoMakeTest")
     public Result autoMakeTest(@RequestParam("subject") String subject, @RequestParam("questionNum") int questionNum
             , @RequestParam("points") int points) {
@@ -105,6 +143,27 @@ public class AiController {
                     : new Result(Code.GET_ERR, "组卷失败!");
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
+     * 教师教学质量
+     *
+     * @param teacherId
+     * @param subject
+     * @param chapter
+     * @param file
+     * @return
+     */
+    @PostMapping("getTeacherGrade")
+    public Result getTeacherGrade(@RequestParam("teacherId") String teacherId, @RequestParam("subject") String subject
+            , @RequestParam("chapter") String chapter, @RequestParam("videoFile") MultipartFile file) {
+        try {
+            return aiService.getTeacherGradeSync(teacherId, subject, chapter, file) != null ? new Result(Code.POST_OK
+                    , aiService.getTeacherGradeSync(teacherId, subject, chapter, file), "查询成功!")
+                    : new Result(Code.POST_ERR, "查询失败!");
+        } catch (IOException e) {
             return new Result(Code.POST_ERR, "网络错误!");
         }
     }

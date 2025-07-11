@@ -7,6 +7,8 @@ import com.ccut.teachingaisystem.dao.questions.testDao;
 import com.ccut.teachingaisystem.dao.users.UsersDao;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.*;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.student.*;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.course.AiTeacherGrade;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.course.AiVideo;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.*;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.*;
 import com.ccut.teachingaisystem.domain.question.analysis.MyResponseBody;
@@ -31,6 +33,7 @@ import com.ccut.teachingaisystem.service.AiService;
 import com.ccut.teachingaisystem.dao.AiDao;
 import com.ccut.teachingaisystem.service.questionsService.TestService;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -38,14 +41,18 @@ import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -480,6 +487,52 @@ public class AiServiceImpl implements AiService {
         } catch (IOException e) {
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public AiTeacherGrade getTeacherGradeSync(String teacher_id, String subject
+            , String chapter, MultipartFile videoFile) {
+        try {
+            String fileName = saveFile(videoFile, teacher_id);
+            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            String fullName = teacher_id + fileName;
+            String videoUrl = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .host(hostAddress)
+                    .port(83)
+                    .pathSegment("teacher_files", fullName) // 自动在两个片段之间补 /
+                    .toUriString();
+            AiVideo aiVideo = new AiVideo(videoUrl, subject, chapter);
+            setClient();
+            RequestBody body = RequestBody.create(
+                    new Gson().toJson(aiVideo),
+                    MediaType.parse("application/json")
+            );
+            Call<AiTeacherGrade> call = aiDao.getTeacherGrade(body);
+            Response<AiTeacherGrade> execute = call.execute();
+            if (execute.body() != null) {
+                String responseBody = execute.body().toString();
+                Gson gson = new Gson();
+                return gson.fromJson(responseBody, AiTeacherGrade.class);
+            }
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+        return null;
+    }
+
+    public String saveFile(MultipartFile file, String teacherId) throws IOException {
+        if (usersDao.selectByTeacherId(teacherId) != null) {
+            String filePath = "D:\\java\\code\\idea program\\TeachingAISystem\\src" +
+                    "\\main\\java\\com\\ccut\\teachingaisystem\\download\\file\\teacher\\"
+                    + teacherId + file.getOriginalFilename();
+            File dest = new File(filePath);
+            file.transferTo(dest);
+            usersDao.insertTeacherFile(teacherId, filePath);
+            return file.getOriginalFilename();
         }
         return null;
     }

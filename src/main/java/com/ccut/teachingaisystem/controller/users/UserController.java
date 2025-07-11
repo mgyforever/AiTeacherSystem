@@ -651,7 +651,7 @@ public class UserController {
     }
 
     /**
-     * 修改某个学生或老师的编号管理用
+     * 弃用
      *
      * @param id
      * @param user_id

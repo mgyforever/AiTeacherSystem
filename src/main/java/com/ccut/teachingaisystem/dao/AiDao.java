@@ -4,6 +4,7 @@ import com.ccut.teachingaisystem.domain.question.aiAnalysis.student.AiStudentFee
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.student.AiStudentPercent;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.AiTeacherFeedback;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.AiTeacherPercent;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.course.AiTeacherGrade;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPTBack;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPtTextBack;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTest;
@@ -60,4 +61,7 @@ public interface AiDao {
 
     @POST("/generate_exam_paper")
     Call<AiTestPercent> getQuestionsPercent(@Body RequestBody body);
+
+    @POST("/comprehensive_video_evaluation")
+    Call<AiTeacherGrade> getTeacherGrade(@Body RequestBody body);
 }

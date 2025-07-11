@@ -4,6 +4,7 @@ import com.ccut.teachingaisystem.domain.question.aiAnalysis.student.AiStudentFee
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.student.AiStudentPercent;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.AiTeacherFeedback;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.AiTeacherPercent;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.course.AiTeacherGrade;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPT;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPTBack;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPtTextBack;
@@ -13,6 +14,7 @@ import com.ccut.teachingaisystem.domain.question.analysis.MyResponseBody;
 import com.ccut.teachingaisystem.domain.question.analysis.Test;
 import com.ccut.teachingaisystem.domain.question.pub.ChoiceAndBlankQuestion;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,4 +33,6 @@ public interface AiService {
     AiPPTBack getPPTUrlSync(String teacher_id, AiPPT aiPPT) throws IOException;
     boolean getPPTSync(String url, String teacher_id);
     AiTestQuestions getTestPercentSync(String subject, int questionNum, int points);
+    AiTeacherGrade getTeacherGradeSync(String teacher_id, String subject, String chapter
+            , MultipartFile videoFile) throws IOException;
 }

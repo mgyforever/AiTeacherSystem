@@ -9,7 +9,10 @@ import com.ccut.teachingaisystem.domain.question.pub.JudgeQuestions;
 import com.ccut.teachingaisystem.domain.question.pub.StudentTest;
 import com.ccut.teachingaisystem.domain.source.AiSourceChapter;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
+import com.ccut.teachingaisystem.domain.source.mysql.MCQ;
 import com.ccut.teachingaisystem.service.AiService;
+import com.ccut.teachingaisystem.service.impl.mysql.PDFParser;
+import com.ccut.teachingaisystem.service.impl.mysql.WordWriter;
 import com.ccut.teachingaisystem.service.questionsService.ChoiceQuestionService;
 import com.ccut.teachingaisystem.service.questionsService.TestService;
 import com.ccut.teachingaisystem.service.usersService.TeacherService;
@@ -196,6 +199,17 @@ class TeachingAiSystemApplicationTests {
         AiSourceSubject aiSourceSubject = new AiSourceSubject();
         AiSourceChapter aiSourceChapter = new AiSourceChapter();
 //        aiService.insertAiSource()
+    }
+
+    @Test
+    void getMysqlSource() throws IOException {
+        PDFParser pdfParser;
+        WordWriter writer;
+        List<MCQ> m = PDFParser.parsePDF("D:\\java\\code\\idea program\\TeachingAISystem" +
+                "\\src\\main\\resources\\mysql\\2025年303数学(三)真题回忆.pdf");
+        System.out.println(m);
+        WordWriter.writeMCQsToWord(m, "D:\\java\\code\\idea program\\TeachingAISystem" +
+                "\\src\\main\\resources\\mysql\\choice.docx");
     }
 }
 
