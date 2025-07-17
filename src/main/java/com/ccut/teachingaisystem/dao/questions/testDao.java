@@ -218,4 +218,7 @@ public interface testDao {
 
     @Select("select * from ai_accuracy_rate")
     List<AccuracyRate> selectAllAccuracyRate();
+
+    @Select("select * from ai_accuracy_rate where student_id = #{student_id}")
+    List<AccuracyRate> selectAllAccuracyRateByStudentId(String student_id);
 }

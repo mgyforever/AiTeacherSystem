@@ -24,16 +24,18 @@ import com.ccut.teachingaisystem.domain.question.pub.PracticeQuestionText;
 import com.ccut.teachingaisystem.domain.question.rate.AccuracyRate;
 import com.ccut.teachingaisystem.domain.question.rate.Chapter;
 import com.ccut.teachingaisystem.domain.question.rate.Knowledge;
+import com.ccut.teachingaisystem.domain.question.rate.QuestionsRate;
 import com.ccut.teachingaisystem.domain.source.AiSourceChapter;
 import com.ccut.teachingaisystem.domain.source.AiSourceResult;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
+import com.ccut.teachingaisystem.domain.users.StudentSubject;
+import com.ccut.teachingaisystem.domain.users.StudentUsers;
 import com.ccut.teachingaisystem.domain.users.TeacherUsers;
 import com.ccut.teachingaisystem.exception.SystemException;
 import com.ccut.teachingaisystem.service.AiService;
 import com.ccut.teachingaisystem.dao.AiDao;
 import com.ccut.teachingaisystem.service.questionsService.TestService;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -53,10 +55,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -212,6 +211,7 @@ public class AiServiceImpl implements AiService {
                 return aiQuestions;
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }
@@ -326,12 +326,22 @@ public class AiServiceImpl implements AiService {
     public AiTeacherFeedback getTeacherFeedbackSync(String teacher_id) throws IOException {
         setClient();
         TeacherUsers teacherUsers = usersDao.selectByTeacherId(teacher_id);
-        String classroom = teacherUsers.getClassroom();
+        List<StudentSubject> students = usersDao.selectSubjectIdByTeacherId(teacher_id);
+        List<String> classrooms = new ArrayList<>();
+        for (StudentSubject studentSubject : students) {
+            StudentUsers users = usersDao.selectByStudentId(studentSubject.getStudent_id());
+            classrooms.add(users.getClassroom());
+        }
+        List<TeacherAnalysisText> finalList = new ArrayList<>();
         String subject = teacherUsers.getSubject();
-        List<TeacherAnalysisText> list = choiceQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
-        List<TeacherAnalysisText> tempList = blankQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
-        list.addAll(tempList);
-        AiTeacherAnalysis feedback = new AiTeacherAnalysis(list);
+        Set<String> classroomSet = new HashSet<>(classrooms);
+        for (String classroom : classroomSet) {
+            List<TeacherAnalysisText> list = choiceQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
+            List<TeacherAnalysisText> tempList = blankQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
+            finalList.addAll(tempList);
+            finalList.addAll(list);
+        }
+        AiTeacherAnalysis feedback = new AiTeacherAnalysis(finalList);
         RequestBody body = RequestBody.create(
                 new Gson().toJson(feedback),
                 MediaType.parse("application/json")
@@ -350,12 +360,22 @@ public class AiServiceImpl implements AiService {
     public AiTeacherPercent getTeacherPercentSync(String teacher_id) throws IOException {
         setClient();
         TeacherUsers teacherUsers = usersDao.selectByTeacherId(teacher_id);
-        String classroom = teacherUsers.getClassroom();
+        List<StudentSubject> students = usersDao.selectSubjectIdByTeacherId(teacher_id);
+        List<String> classrooms = new ArrayList<>();
+        for (StudentSubject studentSubject : students) {
+            StudentUsers users = usersDao.selectByStudentId(studentSubject.getStudent_id());
+            classrooms.add(users.getClassroom());
+        }
+        List<TeacherAnalysisText> finalList = new ArrayList<>();
         String subject = teacherUsers.getSubject();
-        List<TeacherAnalysisText> list = choiceQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
-        List<TeacherAnalysisText> tempList = blankQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
-        list.addAll(tempList);
-        AiTeacherAnalysis feedback = new AiTeacherAnalysis(list);
+        Set<String> classroomSet = new HashSet<>(classrooms);
+        for (String classroom : classroomSet) {
+            List<TeacherAnalysisText> list = choiceQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
+            List<TeacherAnalysisText> tempList = blankQuestionDao.selectPreviousQuestionToAiByClassroom(subject, classroom);
+            finalList.addAll(tempList);
+            finalList.addAll(list);
+        }
+        AiTeacherAnalysis feedback = new AiTeacherAnalysis(finalList);
         RequestBody body = RequestBody.create(
                 new Gson().toJson(feedback),
                 MediaType.parse("application/json")
@@ -440,32 +460,109 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public AiTestQuestions getTestPercentSync(String subject, int questionNum, int points) {
+    public AiTestQuestions getTestPercentToStudentSync(String subject, int questionNum
+            , int points, String studentId) {
         try {
             setClient();
-            SubjectText subjectText = new SubjectText();
             AiTest aiTest = new AiTest();
+            List<SubjectText> subjectTexts = new ArrayList<>();
             AiTestPercent aiTestPercent;
             AiTestQuestions aiTestQuestions = new AiTestQuestions();
-            List<SubjectText> knowledgeMessages = new ArrayList<>();
-            List<AccuracyRate> accuracyRates = testDao.selectAllAccuracyRate();
+            List<JudgeResult> choiceJudges = choiceQuestionDao.selectPreviousQuestionByStudentId(studentId);
+            List<JudgeResult> blankJudges = blankQuestionDao.selectPreviousQuestionByStudentId(studentId);
+            choiceJudges.addAll(blankJudges);
+            List<AccuracyRate> accuracyRates = testDao.selectAllAccuracyRateByStudentId(studentId);
             for (AccuracyRate accuracyRate : accuracyRates) {
                 String knowledgeName = choiceQuestionDao.selectKnowledgeNameById(accuracyRate.getKnowledge());
                 accuracyRate.setKnowledgeName(knowledgeName);
                 int num = accuracyRate.getNum();
                 int right = (int) Math.round(accuracyRate.getRate() * num);
                 for (int i = 0; i < right; i++) {
+                    SubjectText subjectText = new SubjectText();
+                    subjectText.setChapter(accuracyRate.getChapter());
+                    subjectText.setKnowledge(accuracyRate.getKnowledgeName());
+                    subjectText.setJudge(0);
+                    subjectTexts.add(subjectText);
+                }
+                for (int i = 0; i < num - right; i++) {
+                    SubjectText subjectText = new SubjectText();
+                    subjectText.setChapter(accuracyRate.getChapter());
+                    subjectText.setKnowledge(accuracyRate.getKnowledgeName());
+                    subjectText.setJudge(1);
+                    subjectTexts.add(subjectText);
+                }
+            }
+            for (JudgeResult judgeResult : choiceJudges) {
+                SubjectText subjectText = new SubjectText();
+                subjectText.setChapter(judgeResult.getChapter());
+                subjectText.setKnowledge(judgeResult.getKnowledge());
+                subjectText.setJudge(judgeResult.getJudge());
+                subjectTexts.add(subjectText);
+            }
+            aiTest.setSubject_name(subject);
+            aiTest.setQuestion_num(questionNum);
+            aiTest.setPoints(points);
+            aiTest.setSubject(subjectTexts);
+            RequestBody body = RequestBody.create(
+                    new Gson().toJson(aiTest),
+                    MediaType.parse("application/json")
+            );
+            Call<AiTestPercent> call = aiDao.getQuestionsPercent(body);
+            Response<AiTestPercent> execute = call.execute();
+            if (execute.body() != null) {
+                String responseBody = execute.body().toString();
+                Gson gson = new Gson();
+                aiTestPercent = gson.fromJson(responseBody, AiTestPercent.class);
+                List<ChoiceAndBlankQuestion> testQuestions = getTestQuestionsSync(aiTestPercent, subject);
+                aiTestQuestions.setAiTestPercent(aiTestPercent);
+                aiTestQuestions.setQuestions(testQuestions);
+                return aiTestQuestions;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+    }
+
+    @Override
+    public AiTestQuestions getTestPercentSync(String subject, int questionNum, int points) {
+        try {
+            setClient();
+            AiTest aiTest = new AiTest();
+            AiTestPercent aiTestPercent;
+            AiTestQuestions aiTestQuestions = new AiTestQuestions();
+            List<SubjectText> knowledgeMessages = new ArrayList<>();
+            List<AccuracyRate> accuracyRates = testDao.selectAllAccuracyRate();
+            List<JudgeResult> blankPrevious = blankQuestionDao.selectAllPreviousQuestion();
+            List<JudgeResult> studentPrevious = choiceQuestionDao.selectAllPreviousQuestion();
+            studentPrevious.addAll(blankPrevious);
+            for (AccuracyRate accuracyRate : accuracyRates) {
+                String knowledgeName = choiceQuestionDao.selectKnowledgeNameById(accuracyRate.getKnowledge());
+                accuracyRate.setKnowledgeName(knowledgeName);
+                int num = accuracyRate.getNum();
+                int right = (int) Math.round(accuracyRate.getRate() * num);
+                for (int i = 0; i < right; i++) {
+                    SubjectText subjectText = new SubjectText();
                     subjectText.setChapter(accuracyRate.getChapter());
                     subjectText.setKnowledge(accuracyRate.getKnowledgeName());
                     subjectText.setJudge(0);
                     knowledgeMessages.add(subjectText);
                 }
                 for (int i = 0; i < num - right; i++) {
+                    SubjectText subjectText = new SubjectText();
                     subjectText.setChapter(accuracyRate.getChapter());
                     subjectText.setKnowledge(accuracyRate.getKnowledgeName());
                     subjectText.setJudge(1);
                     knowledgeMessages.add(subjectText);
                 }
+            }
+            for (JudgeResult judgeResult : studentPrevious) {
+                SubjectText subjectText = new SubjectText();
+                subjectText.setChapter(judgeResult.getChapter());
+                subjectText.setKnowledge(judgeResult.getKnowledge());
+                subjectText.setJudge(judgeResult.getJudge());
+                knowledgeMessages.add(subjectText);
             }
             aiTest.setSubject_name(subject);
             aiTest.setQuestion_num(questionNum);
@@ -500,11 +597,11 @@ public class AiServiceImpl implements AiService {
             String fileName = saveFile(videoFile, teacher_id);
             String hostAddress = InetAddress.getLocalHost().getHostAddress();
             String fullName = teacher_id + fileName;
-            String videoUrl = ServletUriComponentsBuilder
-                    .fromCurrentContextPath()
+            String videoUrl = ServletUriComponentsBuilder.newInstance()
+                    .scheme("http")
                     .host(hostAddress)
                     .port(83)
-                    .pathSegment("teacher_files", fullName) // 自动在两个片段之间补 /
+                    .pathSegment("teacher_files", fullName)
                     .toUriString();
             AiVideo aiVideo = new AiVideo(videoUrl, subject, chapter);
             setClient();
@@ -520,6 +617,7 @@ public class AiServiceImpl implements AiService {
                 return gson.fromJson(responseBody, AiTeacherGrade.class);
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }
@@ -543,64 +641,66 @@ public class AiServiceImpl implements AiService {
     public List<ChoiceAndBlankQuestion> getTestQuestionsSync(AiTestPercent aiTestPercent, String subject) {
         try {
             List<ChoiceAndBlankQuestion> ChoiceAndBlankQuestions = new ArrayList<>();
-            ChoiceAndBlankQuestion choiceAndBlankQuestion = new ChoiceAndBlankQuestion();
             List<ChapterPointsText> chapterPointsTexts = aiTestPercent.getQuestion();
             for (ChapterPointsText chapterPointsText : chapterPointsTexts) {
                 String chapter = chapterPointsText.getChapter();
                 List<KnowledgePointsText> knowledgePointsTexts = chapterPointsText.getKnowledges();
                 for (KnowledgePointsText knowledgePointsText : knowledgePointsTexts) {
+                    ChoiceAndBlankQuestion choiceQuestion = new ChoiceAndBlankQuestion();
+                    ChoiceAndBlankQuestion blankQuestion = new ChoiceAndBlankQuestion();
                     Integer[] choiceIds = choiceQuestionDao.selectChoiceQuestionIdByKnowledge(subject
                             , chapter, knowledgePointsText.getKnowledge());
                     Integer[] blankIds = blankQuestionDao.selectChoiceQuestionIdByKnowledge(subject
                             , chapter, knowledgePointsText.getKnowledge());
                     int choiceKnowledgeNum;
                     int blankKnowledgeNum;
-                    if (knowledgePointsText.getKnowledge_num() == 1){
+                    if (knowledgePointsText.getKnowledge_num() == 1) {
                         choiceKnowledgeNum = 1;
                         blankKnowledgeNum = 0;
-                    }else{
-                        choiceKnowledgeNum = (int)Math.round(knowledgePointsText.getKnowledge_num() * 0.6);
+                    } else {
+                        choiceKnowledgeNum = (int) Math.round(knowledgePointsText.getKnowledge_num() * 0.6);
                         blankKnowledgeNum = knowledgePointsText.getKnowledge_num() - choiceKnowledgeNum;
-                    }
-                    if (choiceIds.length == 0 || blankIds.length == 0){
-                        continue;
                     }
                     int[] choiceRandomNum = getRandomNum(choiceIds.length, choiceKnowledgeNum);
                     int[] blankRandomNum = getRandomNum(blankIds.length, blankKnowledgeNum);
                     int[] choiceQuestionIds = new int[choiceKnowledgeNum];
                     int[] blankQuestionIds = new int[blankKnowledgeNum];
-                    if (choiceRandomNum.length < choiceKnowledgeNum){
+                    if (choiceRandomNum.length < choiceKnowledgeNum) {
                         int[] tempChoiceIds = new int[choiceRandomNum.length];
-                        for (int i : choiceRandomNum){
+                        for (int i : choiceRandomNum) {
                             tempChoiceIds[i] = choiceIds[i];
                         }
-                        choiceAndBlankQuestion.setChoiceIds(tempChoiceIds);
-                        choiceAndBlankQuestion.setChoiceStr("题库中本知识点的题目过少!");
-                    } else{
+                        choiceQuestion.setChoiceIds(tempChoiceIds);
+                        choiceQuestion.setChoiceStr("题库中本知识点的题目过少!");
+                    } else {
                         for (int i : choiceRandomNum) {
                             choiceQuestionIds[i] = choiceIds[i];
                         }
-                        choiceAndBlankQuestion.setChoiceIds(choiceQuestionIds);
-                        choiceAndBlankQuestion.setBlankStr("题库中本知识点的题目充足!");
+                        choiceQuestion.setChoiceIds(choiceQuestionIds);
+                        choiceQuestion.setBlankStr("题库中本知识点的题目充足!");
                     }
-                    if (blankRandomNum.length < blankKnowledgeNum){
+                    if (blankRandomNum.length < blankKnowledgeNum) {
                         int[] tempBlankIds = new int[blankRandomNum.length];
-                        for (int i : blankRandomNum){
+                        for (int i : blankRandomNum) {
                             tempBlankIds[i] = blankIds[i];
                         }
-                        choiceAndBlankQuestion.setBlankIds(tempBlankIds);
-                        choiceAndBlankQuestion.setBlankStr("题库中本知识点的题目过少!");
+                        blankQuestion.setBlankIds(tempBlankIds);
+                        blankQuestion.setBlankStr("题库中本知识点的题目过少!");
                     } else {
                         for (int i : blankRandomNum) {
                             blankQuestionIds[i] = blankIds[i];
                         }
-                        choiceAndBlankQuestion.setBlankIds(blankQuestionIds);
-                        choiceAndBlankQuestion.setBlankStr("题库中本知识点的题目充足!");
+                        blankQuestion.setBlankIds(blankQuestionIds);
+                        blankQuestion.setBlankStr("题库中本知识点的题目充足!");
                     }
-                    choiceAndBlankQuestion.setChapter(chapter);
-                    choiceAndBlankQuestion.setKnowledge(knowledgePointsText.getKnowledge());
-                    choiceAndBlankQuestion.setGrade(knowledgePointsText.getKnowledge_grade());
-                    ChoiceAndBlankQuestions.add(choiceAndBlankQuestion);
+                    choiceQuestion.setChapter(chapter);
+                    choiceQuestion.setKnowledge(knowledgePointsText.getKnowledge());
+                    choiceQuestion.setGrade(knowledgePointsText.getKnowledge_grade());
+                    ChoiceAndBlankQuestions.add(choiceQuestion);
+                    blankQuestion.setChapter(chapter);
+                    blankQuestion.setKnowledge(knowledgePointsText.getKnowledge());
+                    blankQuestion.setGrade(knowledgePointsText.getKnowledge_grade());
+                    ChoiceAndBlankQuestions.add(blankQuestion);
                 }
             }
             return ChoiceAndBlankQuestions;
@@ -611,13 +711,13 @@ public class AiServiceImpl implements AiService {
     }
 
     //  random < max 得到不重复的随机数 num为数组的大小
-    private int[] getRandomNum(int max, int num) {
+    public int[] getRandomNum(int max, int num) {
         int count = 0;
         int[] randomNums = new int[num];
         randomNums[num - 1] = -1;
-        if (max <= num){
+        if (max <= num) {
             int[] tempNum = new int[max];
-            for (int i = 0; i < max; i++){
+            for (int i = 0; i < max; i++) {
                 tempNum[i] = i;
             }
             return tempNum;
@@ -625,16 +725,16 @@ public class AiServiceImpl implements AiService {
         while (randomNums[num - 1] == -1) {
             for (int i = 0; i < randomNums.length; i++) {
                 Random random = new Random();
-                int value = random.nextInt(0, max); // 生成 [0, 10) 之间的随机整数
-                for (int j = 0; j < randomNums.length; j++) {
-                    if (value != randomNums[j]) {
-                        randomNums[count++] = value;
+                int flag = 0;
+                int value = random.nextInt(0, max);
+                for (int randomNum : randomNums) {
+                    if (value == randomNum) {
+                        flag = 1;
                         break;
-                    }else {
-                        while(value != randomNums[j]){
-                            value = random.nextInt(0, max);
-                        }
                     }
+                }
+                if (flag == 0) {
+                    randomNums[count++] = value;
                 }
             }
         }
@@ -692,9 +792,5 @@ public class AiServiceImpl implements AiService {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         aiDao = retrofit.create(AiDao.class);
-    }
-
-    public TestService getTestService() {
-        return testService;
     }
 }

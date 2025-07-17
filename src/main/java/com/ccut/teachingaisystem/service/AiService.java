@@ -34,6 +34,10 @@ public interface AiService {
     AiPPtTextBack getPPTTextBackSync(String subject, String chapter, String teacher_id, String time) throws IOException;
     AiPPTBack getPPTUrlSync(String teacher_id, AiPPT aiPPT) throws IOException;
     boolean getPPTSync(String url, String teacher_id);
+
+    AiTestQuestions getTestPercentToStudentSync(String subject, int questionNum
+            , int points, String studentId);
+
     AiTestQuestions getTestPercentSync(String subject, int questionNum, int points);
     AiTeacherGrade getTeacherGradeSync(String teacher_id, String subject, String chapter
             , MultipartFile videoFile) throws IOException;

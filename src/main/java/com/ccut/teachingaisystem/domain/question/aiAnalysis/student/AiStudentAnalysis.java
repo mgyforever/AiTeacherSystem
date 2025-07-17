@@ -20,20 +20,20 @@ public class AiStudentAnalysis {
         this.subject_name = subject_name;
     }
 
-    public List<StudentAnalysisText> getStudentAnalysis() {
-        return studentAnalysis;
-    }
-
-    public void setStudentAnalysis(List<StudentAnalysisText> studentAnalysis) {
-        this.studentAnalysis = studentAnalysis;
-    }
-
     public String getSubject_name() {
         return subject_name;
     }
 
     public void setSubject_name(String subject_name) {
         this.subject_name = subject_name;
+    }
+
+    public List<StudentAnalysisText> getStudentAnalysis() {
+        return studentAnalysis;
+    }
+
+    public void setStudentAnalysis(List<StudentAnalysisText> studentAnalysis) {
+        this.studentAnalysis = studentAnalysis;
     }
 
     @Override

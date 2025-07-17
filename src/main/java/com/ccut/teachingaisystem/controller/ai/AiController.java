@@ -3,6 +3,8 @@ package com.ccut.teachingaisystem.controller.ai;
 import com.ccut.teachingaisystem.controller.Code;
 import com.ccut.teachingaisystem.controller.Result;
 import com.ccut.teachingaisystem.dao.AiDao;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.course.AiTeacherGrade;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPT;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTest;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
 import com.ccut.teachingaisystem.service.AiService;
@@ -127,7 +129,23 @@ public class AiController {
     }
 
     /**
-     * 生成PPT
+     * 获取ppt
+     * @param teacherId
+     * @body aiPPT
+     * @return
+     */
+    @PostMapping("/getAiPPT")
+    public Result getAiPPT(@RequestParam("teacherId") String teacherId, @RequestBody AiPPT aiPPT) {
+        try {
+            return aiService.getPPTUrlSync(teacherId, aiPPT) != null ? new Result(Code.POST_OK
+                    , aiService.getPPTUrlSync(teacherId, aiPPT), "查询成功!")
+                    : new Result(Code.POST_ERR, "查询失败!");
+        } catch (IOException e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+    /**
+     * 弃用
      *
      * @param url
      * @param teacher_id
@@ -166,6 +184,27 @@ public class AiController {
     }
 
     /**
+     * 学生模拟考试
+     *
+     * @param subject
+     * @param questionNum
+     * @param points
+     * @param studentId
+     * @return
+     */
+    @GetMapping("/autoMakeTestToStudent")
+    public Result autoMakeTestToStudent(@RequestParam("subject") String subject, @RequestParam("questionNum") int questionNum
+            , @RequestParam("points") int points, @RequestParam("studentId") String studentId) {
+        try {
+            return aiService.getTestPercentToStudentSync(subject, questionNum, points, studentId) != null
+                    ? new Result(Code.GET_OK, aiService.getTestPercentToStudentSync(subject, questionNum
+                    , points, studentId), "查询成功!") : new Result(Code.GET_ERR, "查询失败!");
+        } catch (Exception e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
      * 教师教学质量
      *
      * @param teacherId
@@ -174,14 +213,16 @@ public class AiController {
      * @param file
      * @return
      */
-    @PostMapping("getTeacherGrade")
+    @PostMapping("/getTeacherGrade")
     public Result getTeacherGrade(@RequestParam("teacherId") String teacherId, @RequestParam("subject") String subject
             , @RequestParam("chapter") String chapter, @RequestParam("videoFile") MultipartFile file) {
         try {
-            return aiService.getTeacherGradeSync(teacherId, subject, chapter, file) != null ? new Result(Code.POST_OK
-                    , aiService.getTeacherGradeSync(teacherId, subject, chapter, file), "查询成功!")
+            AiTeacherGrade teacherGradeSync = aiService.getTeacherGradeSync(teacherId, subject, chapter, file);
+            return teacherGradeSync != null ? new Result(Code.POST_OK
+                    , teacherGradeSync,"查询成功!")
                     : new Result(Code.POST_ERR, "查询失败!");
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             return new Result(Code.POST_ERR, "网络错误!");
         }
     }
@@ -202,6 +243,7 @@ public class AiController {
                     , aiService.getChoiceQuestionsSync(subject, chapter, choiceNum), "查询成功!")
                     : new Result(Code.GET_ERR, "查询失败!");
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }

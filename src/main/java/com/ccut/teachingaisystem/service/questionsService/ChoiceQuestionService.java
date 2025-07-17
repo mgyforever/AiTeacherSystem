@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ChoiceQuestionService {
-    boolean insertChapter(Chapter chapter);
+    boolean insertChapter(List<Chapter> chapter);
     boolean insertKnowledge(Knowledge knowledge);
     boolean insertQuestion(QuestionsText questionsText);
     boolean insertWrongAnswer(JudgeResult judgeResult);

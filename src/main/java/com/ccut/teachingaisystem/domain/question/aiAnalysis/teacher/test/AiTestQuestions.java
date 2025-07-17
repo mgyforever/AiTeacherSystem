@@ -31,4 +31,9 @@ public class AiTestQuestions {
     public void setQuestions(List<ChoiceAndBlankQuestion> questions) {
         Questions = questions;
     }
+
+    @Override
+    public String toString() {
+        return "{\"aiTestPercent\":" + aiTestPercent + ", \"questions\":" + Questions + "}";
+    }
 }

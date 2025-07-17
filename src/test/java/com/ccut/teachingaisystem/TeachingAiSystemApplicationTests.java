@@ -2,6 +2,7 @@ package com.ccut.teachingaisystem;
 
 import com.ccut.teachingaisystem.dao.questions.ChoiceQuestionDao;
 import com.ccut.teachingaisystem.dao.users.UsersDao;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.SubjectText;
 import com.ccut.teachingaisystem.domain.question.choice.JudgeResult;
 import com.ccut.teachingaisystem.domain.question.choice.ChoiceQuestionsBody;
 import com.ccut.teachingaisystem.domain.question.choice.QuestionsText;
@@ -9,11 +10,12 @@ import com.ccut.teachingaisystem.domain.question.pub.JudgeQuestions;
 import com.ccut.teachingaisystem.domain.question.pub.StudentTest;
 import com.ccut.teachingaisystem.domain.source.AiSourceChapter;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
-import com.ccut.teachingaisystem.domain.source.mysql.MCQ;
 import com.ccut.teachingaisystem.service.AiService;
+import com.ccut.teachingaisystem.service.impl.AiServiceImpl;
 import com.ccut.teachingaisystem.service.questionsService.ChoiceQuestionService;
 import com.ccut.teachingaisystem.service.questionsService.TestService;
 import com.ccut.teachingaisystem.service.usersService.TeacherService;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +47,8 @@ class TeachingAiSystemApplicationTests {
     private TestService testService;
     @Autowired
     private UsersDao usersDao;
+    @Autowired
+    private AiServiceImpl aiServiceImpl;
 
     @Test
     void contextLoads() {
@@ -192,6 +196,32 @@ class TeachingAiSystemApplicationTests {
         AiSourceSubject aiSourceSubject = new AiSourceSubject();
         AiSourceChapter aiSourceChapter = new AiSourceChapter();
 //        aiService.insertAiSource()
+    }
+
+    @Test
+    void randoms(){
+        int[] randomNum = aiServiceImpl.getRandomNum(5, 3);
+        System.out.println(Arrays.toString(randomNum));
+    }
+
+    @Test
+    void testWord(){
+        List<JudgeResult> judgeResults = choiceQuestionDao.selectAllPreviousQuestion();
+        List<SubjectText> subjectTexts = new ArrayList<>();
+        int count = 0;
+        for (JudgeResult judgeResult : judgeResults) {
+            SubjectText subjectText = new SubjectText();
+            subjectText.setJudge(judgeResult.getJudge());
+            subjectText.setChapter(judgeResult.getChapter());
+            subjectText.setKnowledge(judgeResult.getKnowledge());
+            System.out.println("第" + count + "题");
+            System.out.println(subjectText);
+            subjectTexts.add(subjectText);
+        }
+        System.out.println("共有:" + subjectTexts.size() + "题");
+        for (SubjectText s : subjectTexts) {
+            System.out.println(s);
+        }
     }
 }
 

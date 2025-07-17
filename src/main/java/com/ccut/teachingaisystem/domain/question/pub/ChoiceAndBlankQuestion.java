@@ -1,5 +1,7 @@
 package com.ccut.teachingaisystem.domain.question.pub;
 
+import java.util.Arrays;
+
 public class ChoiceAndBlankQuestion {
     int[] choiceIds;
     int[] blankIds;
@@ -77,5 +79,10 @@ public class ChoiceAndBlankQuestion {
 
     public void setBlankStr(String blankStr) {
         this.blankStr = blankStr;
+    }
+
+    @Override
+    public String toString() {
+        return "{\"choiceIds\":" + Arrays.toString(choiceIds) + ", \"blankIds\":" + Arrays.toString(blankIds) + ", \"knowledge\":\"" + knowledge + "\", \"chapter\":\"" + chapter + "\", \"choiceStr\"" + choiceStr + ", \"blankStr\"" + blankStr + "}";
     }
 }

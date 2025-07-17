@@ -96,7 +96,7 @@ public class TeacherServiceImpl implements TeacherService {
         try {
             if (usersDao.selectByTeacherId(teacher_id) != null) {
                 String phoneNumber = usersDao.selectByTeacherId(teacher_id).getPhoneNumber();
-                return usersDao.selectStudentIdentify(phoneNumber);
+                return usersDao.selectTeacherIdentifyByPhoneNumber(phoneNumber);
             } else {
                 return null;
             }

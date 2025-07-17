@@ -28,9 +28,25 @@ public class ChoiceQuestionServiceImpl implements ChoiceQuestionService {
     private UsersDao usersDao;
 
     @Override
-    public boolean insertChapter(Chapter chapter) {
+    public boolean insertChapter(List<Chapter> chapter) {
         try {
-            return choiceQuestionDao.insertChapter(chapter) > 0;
+            if (chapter == null || chapter.isEmpty()) {
+                return false;
+            }
+            boolean flag = true;
+            int[] bl = new int[chapter.size() + 1];
+            int count = 0;
+            for (Chapter chapter1 : chapter) {
+                bl[count++] = choiceQuestionDao.insertChapter(chapter1);
+            }
+            bl[count] = choiceQuestionDao.insertSubject(chapter.get(0).getSubject());
+            for (int i : bl){
+                if (i <= 0){
+                    flag = false;
+                    break;
+                }
+            }
+            return flag;
         } catch (Exception e) {
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());

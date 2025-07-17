@@ -170,4 +170,10 @@ public interface ChoiceQuestionDao {
     @Select("select id from ai_testtable where subject = #{subject} and chapter = #{chapter}" +
             " and knowledge = #{knowledge}")
     Integer[] selectChoiceQuestionIdByKnowledge(String subject, String chapter, String knowledge);
+
+    @Select("select * from ai_previous_question where student_id = #{student_id}")
+    List<JudgeResult> selectPreviousQuestionByStudentId(String student_id);
+
+    @Select("select * from ai_previous_question")
+    List<JudgeResult> selectAllPreviousQuestion();
 }

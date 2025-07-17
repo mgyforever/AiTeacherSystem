@@ -18,6 +18,11 @@ public interface UsersDao {
             ", #{phoneNumber}, #{email}, #{year}, #{professional})")
     int insertStudent(TempUsers tempUsers);
 
+    @Insert("insert into ai_student_users (student_id, username, password, classroom, phoneNumber, img, email, year" +
+            ", professional) values (#{student_id}, #{username}, #{password}, #{classroom},  #{phoneNumber}, #{img}" +
+            ", #{email}, #{year}, #{professional});")
+    int insertAllStudentUserMessage(TempUsers studentUsers, String img);
+
     @Insert("insert into ai_teacher_users (teacher_id, password, phoneNumber, subject, email, year, professional) " +
             "VALUES (#{teacher_id}, #{password}, #{phoneNumber}, #{subject}, #{email}, #{year}, #{professional})")
     int insertTeacherUsers(TempUsers tempUsers);

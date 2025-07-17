@@ -112,4 +112,10 @@ public interface BlankQuestionDao {
     @Select("select id from ai_blank_test where subject = #{subject} and chapter = #{chapter}" +
             " and knowledge = #{knowledge}")
     Integer[] selectChoiceQuestionIdByKnowledge(String subject, String chapter, String knowledge);
+
+    @Select("select * from ai_blank_previous_question")
+    List<JudgeResult> selectAllPreviousQuestion();
+
+    @Select("select * from ai_blank_previous_question where student_id = #{student_id}")
+    List<JudgeResult> selectPreviousQuestionByStudentId(String student_id);
 }

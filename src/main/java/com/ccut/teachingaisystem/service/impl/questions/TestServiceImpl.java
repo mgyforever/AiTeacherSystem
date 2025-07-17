@@ -70,7 +70,7 @@ public class TestServiceImpl implements TestService {
                     } else {
                         answer = blankQuestionDao.selectById(question_id).getAnswer();
                     }
-                    if (answer.equals(student_answer)) {
+                    if (!answer.equals(student_answer)) {
                         judge = 0;
                     } else {
                         judge = 1;
@@ -95,7 +95,7 @@ public class TestServiceImpl implements TestService {
                         blankQuestionDao.insertPreviousQuestion(judgeResult);
                     }
                     judgeQuestions.setJudge(judge);
-                    if (judge == 0) {
+                    if (judge == 1) {
                         grade += judgeQuestions.getGrade();
                     }
                 }

@@ -3,6 +3,7 @@ package com.ccut.teachingaisystem.config;
 import com.ccut.teachingaisystem.dao.LogDao;
 import com.ccut.teachingaisystem.domain.log.OperationLog;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,9 @@ public class OperationLogAspect {
             result = joinPoint.proceed(); // 执行原方法
             logRecord.setSuccess(true);
             logRecord.setStatusCode(HttpServletResponse.SC_OK);
-            logRecord.setResponseData(new ObjectMapper().writeValueAsString(result));
+            logRecord.setResponseData(new ObjectMapper()
+                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                    .writeValueAsString(result));
         } catch (Exception e) {
             logRecord.setSuccess(false);
             logRecord.setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

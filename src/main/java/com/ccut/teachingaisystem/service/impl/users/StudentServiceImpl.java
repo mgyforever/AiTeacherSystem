@@ -384,10 +384,14 @@ public class StudentServiceImpl implements StudentService {
             System.out.println(tempUsers);
             int[] flag = new int[tempUsers.size() * 3];
             int count = 0;
+            String imgPath = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\resources\\static\\userImgs" +
+                    "\\f1c90710-3adc-47fb-a7c7-4e2b3b898fe2v2-f37c17fa026dfbb46df18af78ef09b1d_r.jpg";
             for (TempUsers tempUser : tempUsers) {
+                String userName = "用户" + tempUser.getPhoneNumber();
                 if (usersDao.selectIdByPhoneNumber(tempUser.getPhoneNumber()) == null) {
+                    tempUser.setUserName(userName);
                     flag[count] = usersDao.insertStudentMessage(tempUser);
-                    flag[++count] = usersDao.insertStudent(tempUser);
+                    flag[++count] = usersDao.insertAllStudentUserMessage(tempUser, imgPath);
                     flag[++count] = usersDao.insertStudentsIdentify(tempUser);
                     count++;
                 }

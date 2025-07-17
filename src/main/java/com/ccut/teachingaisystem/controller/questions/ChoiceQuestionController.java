@@ -31,7 +31,7 @@ public class ChoiceQuestionController {
      * chapter:章节
      */
     @PostMapping("/insertChapter")
-    public Result insertChapter(@RequestBody Chapter chapter) {
+    public Result insertChapter(@RequestBody List<Chapter> chapter) {
         try {
             return choiceQuestionService.insertChapter(chapter)
                     ? new Result(Code.POST_OK, "添加成功!") :
