@@ -8,6 +8,7 @@ import com.ccut.teachingaisystem.domain.users.*;
 import com.ccut.teachingaisystem.exception.SystemException;
 import com.ccut.teachingaisystem.service.usersService.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,9 @@ import java.util.UUID;
 
 @Service
 public class StudentServiceImpl implements StudentService {
+
+    @Value("${file.image_dir}")
+    private String imageDir;
 
     @Autowired
     private UsersDao usersDao;
@@ -321,9 +325,8 @@ public class StudentServiceImpl implements StudentService {
             if (usersDao.selectByStudentId(student_id) != null) {
                 BufferedImage image = ImageIO.read(file.getInputStream());
                 if (!file.isEmpty() && image != null) {
-                    String filePath = "D:\\java\\code\\idea program\\TeachingAISystem\\src" +
-                            "\\main\\java\\com\\ccut\\teachingaisystem\\download\\usersimage\\"
-                            + UUID.randomUUID() + file.getOriginalFilename();
+                    String basePath = System.getProperty("user.dir") + File.separator;
+                    String filePath = basePath + imageDir + UUID.randomUUID() + file.getOriginalFilename();
                     File dest = new File(filePath);
                     file.transferTo(dest);
                     return usersDao.updateStudentImg(student_id, filePath) > 0;
@@ -384,8 +387,9 @@ public class StudentServiceImpl implements StudentService {
             System.out.println(tempUsers);
             int[] flag = new int[tempUsers.size() * 3];
             int count = 0;
-            String imgPath = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\resources\\static\\userImgs" +
-                    "\\f1c90710-3adc-47fb-a7c7-4e2b3b898fe2v2-f37c17fa026dfbb46df18af78ef09b1d_r.jpg";
+            String basePath = System.getProperty("user.dir") + File.separator;
+            String imgPath = basePath + imageDir +
+                    "f1c90710-3adc-47fb-a7c7-4e2b3b898fe2v2-f37c17fa026dfbb46df18af78ef09b1d_r.jpg";
             for (TempUsers tempUser : tempUsers) {
                 String userName = "用户" + tempUser.getPhoneNumber();
                 if (usersDao.selectIdByPhoneNumber(tempUser.getPhoneNumber()) == null) {

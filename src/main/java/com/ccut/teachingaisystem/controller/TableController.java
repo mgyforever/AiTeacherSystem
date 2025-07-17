@@ -4,16 +4,22 @@ import com.alibaba.excel.EasyExcel;
 import com.ccut.teachingaisystem.dao.LogDao;
 import com.ccut.teachingaisystem.domain.log.OperationLog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
 public class TableController {
+
+    @Value("${file.log-dir}")
+    private String logDir;
+
     @Autowired
     private LogDao logDao;
     private final JdbcTemplate jdbcTemplate;
@@ -41,10 +47,10 @@ public class TableController {
         }
 
         // 构建文件名
+        String basePath = System.getProperty("user.dir") + File.separator;
         String archiveDate = FORMATTER.format(LocalDateTime.now());
         String fileName = "operation_log_archive_" + archiveDate + ".xlsx";
-        String path = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\java" +
-                "\\com\\ccut\\teachingaisystem\\download\\log" + fileName;
+        String path = basePath + logDir + fileName;
 
         // 写入 Excel 文件
         try {

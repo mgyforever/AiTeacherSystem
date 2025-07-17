@@ -253,15 +253,15 @@ public class AiController {
      *
      * @param subject
      * @param chapter
-     * @param choiceNum
+     * @param blankNum
      * @return
      */
     @GetMapping("/getBlankQuestions")
     public Result getBlankQuestions(@RequestParam("subject") String subject, @RequestParam("chapter") String chapter
-            , @RequestParam("choiceNum") int choiceNum) {
+            , @RequestParam("blankNum") int blankNum) {
         try {
-            return aiService.getBlankQuestionsSync(subject, chapter, choiceNum) != null ? new Result(Code.GET_OK
-                    , aiService.getBlankQuestionsSync(subject, chapter, choiceNum), "查询成功!")
+            return aiService.getBlankQuestionsSync(subject, chapter, blankNum) != null ? new Result(Code.GET_OK
+                    , aiService.getBlankQuestionsSync(subject, chapter, blankNum), "查询成功!")
                     : new Result(Code.GET_ERR, "查询失败!");
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package com.ccut.teachingaisystem.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -7,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -21,10 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FileDownloadController {
 
-    // teacher 目录
-    private static final Path BASE = Paths.get(
-            "D:/java/code/idea program/TeachingAISystem/src/main/java/com/ccut/teachingaisystem/download/file/teacher"
-    );
+    @Value("${file.teacher-dir}")
+    private String teacherFileUploadDir;
 
     /**
      * 访问示例：
@@ -33,8 +33,11 @@ public class FileDownloadController {
     @GetMapping("/teacher_files/{fullName:.+}")
     public ResponseEntity<Resource> download(@PathVariable String fullName) throws IOException {
 
+        String basePath = System.getProperty("user.dir") + File.separator;
+        Path filePath = Paths.get(basePath, teacherFileUploadDir);
+
         // fullName = "1新建 Microsoft Excel 工作表.xlsx"
-        Path file = BASE.resolve(fullName).normalize();
+        Path file = filePath.resolve(fullName).normalize();
         if (!Files.exists(file)) {
             return ResponseEntity.notFound().build();
         }

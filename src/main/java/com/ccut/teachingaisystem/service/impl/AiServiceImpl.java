@@ -61,6 +61,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AiServiceImpl implements AiService {
 
+    @Value("${file.teacher-dir}")
+    private String teacherDir;
+
     @Value("${myAi.service.ip}")
     private String baseIp;
 
@@ -626,9 +629,8 @@ public class AiServiceImpl implements AiService {
 
     public String saveFile(MultipartFile file, String teacherId) throws IOException {
         if (usersDao.selectByTeacherId(teacherId) != null) {
-            String filePath = "D:\\java\\code\\idea program\\TeachingAISystem\\src" +
-                    "\\main\\java\\com\\ccut\\teachingaisystem\\download\\file\\teacher\\"
-                    + teacherId + file.getOriginalFilename();
+            String basePath = System.getProperty("user.dir") + File.separator;
+            String filePath = basePath + teacherDir + UUID.randomUUID() + teacherId + file.getOriginalFilename();
             File dest = new File(filePath);
             file.transferTo(dest);
             usersDao.insertTeacherFile(teacherId, filePath);
@@ -754,9 +756,8 @@ public class AiServiceImpl implements AiService {
                 && usersDao.selectIdByTeacherId(teacherId) > 0) {
             InputStream inputStream = responseBodyCall.body().byteStream();
             String fileName = UUID.randomUUID().toString();
-            String filePath = "D:\\java\\code\\idea program\\" +
-                    "TeachingAISystem\\src\\main\\java\\com\\ccut\\" +
-                    "teachingaisystem\\download\\file\\" + fileName;
+            String basePath = System.getProperty("user.dir") + File.separator;
+            String filePath = basePath + teacherDir + fileName;
             try {
                 FileOutputStream fos = new FileOutputStream(filePath);
                 int len;

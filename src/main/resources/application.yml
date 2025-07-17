@@ -32,7 +32,10 @@ spring:
           max-file-size: -1    # 不限制单个文件
           max-request-size: -1 # 不限制整个请求
 file:
-  upload-dir: D:\java\code\idea program\TeachingAISystem\src\main\java\com\ccut\teachingaisystem\download\file\teacher
+  teacher-dir: src/main/java/com/ccut/teachingaisystem/download/file/teacher/
+  image_dir: src/main/java/com/ccut/teachingaisystem/download/file/usersImage/
+  log-dir: src/main/java/com/ccut/teachingaisystem/download/file/log/
+  questionImg-dir: src/main/java/com/ccut/teachingaisystem/download/file/questionImg/
 myAi:
   service:
     ip: 100.125.72.218

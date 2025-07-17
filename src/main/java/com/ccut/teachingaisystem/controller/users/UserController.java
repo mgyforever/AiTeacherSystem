@@ -7,6 +7,7 @@ import com.ccut.teachingaisystem.domain.users.*;
 import com.ccut.teachingaisystem.service.usersService.ManagerService;
 import com.ccut.teachingaisystem.service.usersService.StudentService;
 import com.ccut.teachingaisystem.service.usersService.TeacherService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ import java.util.Map;
  */
 
 
+@Slf4j
 @SuppressWarnings("ALL")
 @RestController
 @RequestMapping("/users")
@@ -195,22 +197,27 @@ public class UserController {
             , @RequestParam("judge") int judge
             , @RequestParam("userId") String userId) throws IOException {
         BufferedImage image = ImageIO.read(file.getInputStream());
-        if (!file.isEmpty() && image != null) {
-            if (judge == 1) {
-                return studentService.updateImage(userId, file)
-                        ? new Result(Code.POST_OK, "图片保存成功!") :
-                        new Result(Code.POST_ERR, "图片保存失败!");
-            } else if (judge == 2) {
-                return teacherService.updateImage(userId, file)
-                        ? new Result(Code.POST_OK, "图片保存成功!") :
-                        new Result(Code.POST_ERR, "图片保存失败!");
+        try {
+            if (!file.isEmpty() && image != null) {
+                if (judge == 1) {
+                    return studentService.updateImage(userId, file)
+                            ? new Result(Code.POST_OK, "图片保存成功!") :
+                            new Result(Code.POST_ERR, "图片保存失败!");
+                } else if (judge == 2) {
+                    return teacherService.updateImage(userId, file)
+                            ? new Result(Code.POST_OK, "图片保存成功!") :
+                            new Result(Code.POST_ERR, "图片保存失败!");
+                }
+            } else if (!file.isEmpty() && image == null && judge == 2) {
+                return teacherService.insertTeacherFile(userId, file)
+                        ? new Result(Code.POST_OK, "文件保存成功!") :
+                        new Result(Code.POST_ERR, "文件保存失败!");
             }
-        } else if (!file.isEmpty() && image == null && judge == 2) {
-            return teacherService.insertTeacherFile(userId, file)
-                    ? new Result(Code.POST_OK, "文件保存成功!") :
-                    new Result(Code.POST_ERR, "文件保存失败!");
+            return new Result(Code.POST_ERR, "保存失败!(else)");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return new Result(Code.POST_ERR, "保存失败!(else)");
     }
 
     /**

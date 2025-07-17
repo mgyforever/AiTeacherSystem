@@ -9,6 +9,7 @@ import com.ccut.teachingaisystem.domain.question.choice.JudgeResult;
 import com.ccut.teachingaisystem.exception.SystemException;
 import com.ccut.teachingaisystem.service.questionsService.BlankQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,10 @@ import java.util.UUID;
 
 @Service
 public class BlankQuestionServiceImpl implements BlankQuestionService {
+
+    @Value("${file.questionImg-dir}")
+    private String questionImgDir;
+
     @Autowired
     private BlankQuestionDao blankQuestionDao;
 
@@ -92,9 +97,8 @@ public class BlankQuestionServiceImpl implements BlankQuestionService {
         try {
             List<String> filePathList = new ArrayList<>();
             for (MultipartFile file : files) {
-                String filePath = "D:\\java\\code\\idea program\\TeachingAISystem\\src\\main\\java" +
-                        "\\com\\ccut\\teachingaisystem\\download\\questionimg" +
-                        UUID.randomUUID() + file.getOriginalFilename();
+                String basePath = System.getProperty("user.dir") + File.separator;
+                String filePath = basePath + questionImgDir + UUID.randomUUID() + file.getOriginalFilename();
                 File dest = new File(filePath);
                 file.transferTo(dest);
                 filePathList.add(file.getOriginalFilename());

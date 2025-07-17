@@ -10,6 +10,7 @@ import com.ccut.teachingaisystem.service.usersService.TeacherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,12 @@ import java.util.UUID;
 public class TeacherServiceImpl implements TeacherService {
 
     private static final Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
+
+    @Value("${file.teacher-dir}")
+    private String teacherDir;
+
+    @Value("${file.image_dir}")
+    private String imageDir;
 
     @Autowired
     private UsersDao usersDao;
@@ -247,9 +255,9 @@ public class TeacherServiceImpl implements TeacherService {
     public boolean insertTeacherFile(String teacher_id, MultipartFile file) {
         try {
             if (usersDao.selectByTeacherId(teacher_id) != null) {
-                String filePath = "D:\\java\\code\\idea program\\TeachingAISystem\\src" +
-                        "\\main\\java\\com\\ccut\\teachingaisystem\\download\\file\\teacher\\"
-                        + teacher_id + file.getOriginalFilename();
+                String basePath = System.getProperty("user.dir") + File.separator;
+                String fileName = teacher_id + file.getOriginalFilename();
+                String filePath = String.valueOf(Paths.get(basePath,teacherDir,fileName));
                 File dest = new File(filePath);
                 file.transferTo(dest);
                 return usersDao.insertTeacherFile(teacher_id, filePath) > 0;
@@ -382,9 +390,8 @@ public class TeacherServiceImpl implements TeacherService {
                 if (usersDao.selectByTeacherId(Teacher_id) != null) {
                     BufferedImage image = ImageIO.read(file.getInputStream());
                     if (!file.isEmpty() && image != null) {
-                        String filePath = "D:\\java\\code\\idea program\\TeachingAISystem\\src" +
-                                "\\main\\java\\com\\ccut\\teachingaisystem\\download\\usersimage\\"
-                                + UUID.randomUUID() + file.getOriginalFilename();
+                        String basePath = System.getProperty("user.dir") + File.separator;
+                        String filePath = basePath + imageDir + UUID.randomUUID() + file.getOriginalFilename();
                         File dest = new File(filePath);
                         file.transferTo(dest);
                         return usersDao.updateTeacherImg(Teacher_id, filePath) > 0;
