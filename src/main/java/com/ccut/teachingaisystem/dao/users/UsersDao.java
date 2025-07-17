@@ -58,6 +58,10 @@ public interface UsersDao {
             "VALUES (#{student_id}, #{subject}, #{teacher_id})")
     int insertStudentSubject(String student_id, String subject, String teacher_id);
 
+    @Insert("insert into ai_user_actions (user_id, year, professional, classroom, judge, action, num, begin, end) " +
+            "VALUES (#{user_id}, #{year}, #{professional}, #{classroom}, #{judge}, #{action}, #{num}, #{begin}, #{end})")
+    int insertUserAction(UserActions userActions);
+
     @Select("select * from ai_student_users where id = #{id}")
     StudentUsers selectByIdStudent(int id);
 
@@ -276,4 +280,16 @@ public interface UsersDao {
 
     @Select("select * from ai_student_message")
     List<StudentMessage> selectAllStudentMessage();
+
+    @Select("select * from ai_user_actions where user_id = #{user_id} and judge = 1")
+    List<UserActions> selectStudentActionsByUserId(String user_id, int judge);
+
+    @Select("select * from ai_user_actions where user_id = #{user_id} and judge = 2")
+    List<UserActions> selectTeacherActionsByUserId(String user_id, int judge);
+
+    @Select("select student_id from ai_student_subject where teacher_id = #{teacher_id}")
+    String[] selectStudentIdsByTeacherId(String teacher_id);
+
+    @Select("select * from ai_user_actions")
+    List<UserActions> selectAllUserActions();
 }

@@ -48,7 +48,6 @@ public class PPTPointsText {
 
     @Override
     public String toString() {
-        return "{\"knowledge\":\"" + knowledge + "\", \"practice\":\""
-                + practice + "\", \"time\":\"" + time + "\"}";
+        return new com.google.gson.Gson().toJson(this);
     }
 }

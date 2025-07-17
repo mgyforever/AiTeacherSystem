@@ -12,6 +12,15 @@ public class AiPPT {
     @SerializedName("subject")
     String subject;
 
+    @SerializedName("question_most_choice")
+    List<String> question_most_choice;
+
+    @SerializedName("question_most_blank")
+    List<String> question_most_blank;
+
+    @SerializedName("section")
+    String section;
+
     @SerializedName("topics")
     List<PPTTitleText> topics;
 
@@ -48,8 +57,32 @@ public class AiPPT {
         this.topics = topics;
     }
 
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
+    }
+
+    public List<String> getQuestion_most_choice() {
+        return question_most_choice;
+    }
+
+    public void setQuestion_most_choice(List<String> question_most_choice) {
+        this.question_most_choice = question_most_choice;
+    }
+
+    public List<String> getQuestion_most_blank() {
+        return question_most_blank;
+    }
+
+    public void setQuestion_most_blank(List<String> question_most_blank) {
+        this.question_most_blank = question_most_blank;
+    }
+
     @Override
     public String toString() {
-        return "{\"author\":\"" + author + "\", \"subject\":\"" + subject + "\", \"topics\":" + topics + "}";
+        return new com.google.gson.Gson().toJson(this);
     }
 }

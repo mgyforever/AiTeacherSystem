@@ -155,7 +155,8 @@ public class ChoiceQuestionServiceImpl implements ChoiceQuestionService {
     @Override
     public boolean deleteSubject(String subject) {
         try {
-            return choiceQuestionDao.deleteSubject(subject) > 0;
+            return choiceQuestionDao.deleteSubject(subject) > 0 &&
+                    choiceQuestionDao.deleteSubjectBySubject(subject) > 0;
         } catch (Exception e) {
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());

@@ -36,6 +36,7 @@ import com.ccut.teachingaisystem.service.AiService;
 import com.ccut.teachingaisystem.dao.AiDao;
 import com.ccut.teachingaisystem.service.questionsService.TestService;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -54,10 +55,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class AiServiceImpl implements AiService {
 
@@ -516,6 +520,7 @@ public class AiServiceImpl implements AiService {
                 String responseBody = execute.body().toString();
                 Gson gson = new Gson();
                 aiTestPercent = gson.fromJson(responseBody, AiTestPercent.class);
+                System.out.println(aiTestPercent);
                 List<ChoiceAndBlankQuestion> testQuestions = getTestQuestionsSync(aiTestPercent, subject);
                 aiTestQuestions.setAiTestPercent(aiTestPercent);
                 aiTestQuestions.setQuestions(testQuestions);
@@ -587,6 +592,8 @@ public class AiServiceImpl implements AiService {
                 return aiTestQuestions;
             }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }
@@ -615,6 +622,10 @@ public class AiServiceImpl implements AiService {
             Call<AiTeacherGrade> call = aiDao.getTeacherGrade(body);
             Response<AiTeacherGrade> execute = call.execute();
             if (execute.body() != null) {
+                BigDecimal bd = BigDecimal.valueOf(execute.body().getOverall_score());
+                bd = bd.setScale(2, RoundingMode.HALF_UP); // 四舍五入
+                double rounded = bd.doubleValue();
+                execute.body().setOverall_score(rounded);
                 String responseBody = execute.body().toString();
                 Gson gson = new Gson();
                 return gson.fromJson(responseBody, AiTeacherGrade.class);
@@ -630,7 +641,7 @@ public class AiServiceImpl implements AiService {
     public String saveFile(MultipartFile file, String teacherId) throws IOException {
         if (usersDao.selectByTeacherId(teacherId) != null) {
             String basePath = System.getProperty("user.dir") + File.separator;
-            String filePath = basePath + teacherDir + UUID.randomUUID() + teacherId + file.getOriginalFilename();
+            String filePath = basePath + teacherDir + teacherId + file.getOriginalFilename();
             File dest = new File(filePath);
             file.transferTo(dest);
             usersDao.insertTeacherFile(teacherId, filePath);
@@ -663,6 +674,8 @@ public class AiServiceImpl implements AiService {
                         choiceKnowledgeNum = (int) Math.round(knowledgePointsText.getKnowledge_num() * 0.6);
                         blankKnowledgeNum = knowledgePointsText.getKnowledge_num() - choiceKnowledgeNum;
                     }
+                    System.out.println("choiceKnowledgeNum" + choiceKnowledgeNum);
+                    System.out.println("blankKnowledgeNum" + blankKnowledgeNum);
                     int[] choiceRandomNum = getRandomNum(choiceIds.length, choiceKnowledgeNum);
                     int[] blankRandomNum = getRandomNum(blankIds.length, blankKnowledgeNum);
                     int[] choiceQuestionIds = new int[choiceKnowledgeNum];
@@ -675,8 +688,9 @@ public class AiServiceImpl implements AiService {
                         choiceQuestion.setChoiceIds(tempChoiceIds);
                         choiceQuestion.setChoiceStr("题库中本知识点的题目过少!");
                     } else {
+                        int count = 0;
                         for (int i : choiceRandomNum) {
-                            choiceQuestionIds[i] = choiceIds[i];
+                            choiceQuestionIds[count++] = choiceIds[i];
                         }
                         choiceQuestion.setChoiceIds(choiceQuestionIds);
                         choiceQuestion.setBlankStr("题库中本知识点的题目充足!");
@@ -689,8 +703,9 @@ public class AiServiceImpl implements AiService {
                         blankQuestion.setBlankIds(tempBlankIds);
                         blankQuestion.setBlankStr("题库中本知识点的题目过少!");
                     } else {
+                        int count = 0;
                         for (int i : blankRandomNum) {
-                            blankQuestionIds[i] = blankIds[i];
+                            blankQuestionIds[count++] = blankIds[i];
                         }
                         blankQuestion.setBlankIds(blankQuestionIds);
                         blankQuestion.setBlankStr("题库中本知识点的题目充足!");
@@ -707,6 +722,7 @@ public class AiServiceImpl implements AiService {
             }
             return ChoiceAndBlankQuestions;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }
@@ -714,9 +730,10 @@ public class AiServiceImpl implements AiService {
 
     //  random < max 得到不重复的随机数 num为数组的大小
     public int[] getRandomNum(int max, int num) {
-        int count = 0;
-        int[] randomNums = new int[num];
-        randomNums[num - 1] = -1;
+        if (num <= 0 || max <= 0) {
+            return new int[0];
+        }
+
         if (max <= num) {
             int[] tempNum = new int[max];
             for (int i = 0; i < max; i++) {
@@ -724,24 +741,22 @@ public class AiServiceImpl implements AiService {
             }
             return tempNum;
         }
-        while (randomNums[num - 1] == -1) {
-            for (int i = 0; i < randomNums.length; i++) {
-                Random random = new Random();
-                int flag = 0;
-                int value = random.nextInt(0, max);
-                for (int randomNum : randomNums) {
-                    if (value == randomNum) {
-                        flag = 1;
-                        break;
-                    }
-                }
-                if (flag == 0) {
-                    randomNums[count++] = value;
-                }
+
+        int[] randomNums = new int[num];
+        Set<Integer> used = new HashSet<>();
+        Random random = new Random();
+        int i = 0;
+
+        while (i < num) {
+            int value = random.nextInt(max);  // 生成 [0, max) 之间的随机数
+            if (!used.contains(value)) {
+                used.add(value);
+                randomNums[i++] = value;
             }
         }
         return randomNums;
     }
+
 
     private boolean downFile(String fileUrl, String teacherId) {
         int judge = 0;

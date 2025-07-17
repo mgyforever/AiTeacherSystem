@@ -56,6 +56,9 @@ public interface ChoiceQuestionDao {
     @Delete("delete from ai_chapter where subject = #{subject}")
     int deleteSubject(String subject);
 
+    @Delete("delete from ai_subject where subject = #{subject}")
+    int deleteSubjectBySubject(String subject);
+
     @Delete("delete from ai_chapter where chapter = #{chapter}")
     int deleteChapter(String chapter);
 

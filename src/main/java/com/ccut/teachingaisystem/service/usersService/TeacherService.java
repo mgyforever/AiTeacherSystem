@@ -36,4 +36,7 @@ public interface TeacherService {
     boolean updateEmail(String TeacherId, String email);
     boolean updateTeacher(TeacherUsers teacherUsers);
     List<TeacherFile> getTeacherAllFilesName(String teacher_id);
+    boolean insertTeacherActions(UserActions UserActions);
+    List<UserActions> selectActionsByTeacherId(String Teacher_id, int judge);
+    List<UserActions> selectStudentActionsByTeacherId(String Teacher_id);
 }

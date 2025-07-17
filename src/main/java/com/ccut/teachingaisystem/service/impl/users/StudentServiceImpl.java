@@ -427,4 +427,24 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
+    @Override
+    public boolean insertStudentActions(UserActions userActions) {
+        try {
+            return usersDao.insertUserAction(userActions) > 0;
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<UserActions> selectStudentActionsByStudentId(String user_id, int judge) {
+        try {
+            return usersDao.selectStudentActionsByUserId(user_id, judge);
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+    }
+
 }

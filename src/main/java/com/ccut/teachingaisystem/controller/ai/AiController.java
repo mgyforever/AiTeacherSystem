@@ -5,7 +5,9 @@ import com.ccut.teachingaisystem.controller.Result;
 import com.ccut.teachingaisystem.dao.AiDao;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.course.AiTeacherGrade;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPT;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.ppt.AiPPTBack;
 import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTest;
+import com.ccut.teachingaisystem.domain.question.aiAnalysis.teacher.test.AiTestQuestions;
 import com.ccut.teachingaisystem.domain.source.AiSourceSubject;
 import com.ccut.teachingaisystem.service.AiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,9 +139,10 @@ public class AiController {
     @PostMapping("/getAiPPT")
     public Result getAiPPT(@RequestParam("teacherId") String teacherId, @RequestBody AiPPT aiPPT) {
         try {
-            return aiService.getPPTUrlSync(teacherId, aiPPT) != null ? new Result(Code.POST_OK
-                    , aiService.getPPTUrlSync(teacherId, aiPPT), "查询成功!")
-                    : new Result(Code.POST_ERR, "查询失败!");
+            AiPPTBack pptUrlSync = aiService.getPPTUrlSync(teacherId, aiPPT);
+            return pptUrlSync != null
+                    ? new Result(Code.POST_OK, pptUrlSync, "查询成功!") :
+                    new Result(Code.POST_ERR, "查询失败!");
         } catch (IOException e) {
             return new Result(Code.POST_ERR, "网络错误!");
         }
@@ -196,9 +199,11 @@ public class AiController {
     public Result autoMakeTestToStudent(@RequestParam("subject") String subject, @RequestParam("questionNum") int questionNum
             , @RequestParam("points") int points, @RequestParam("studentId") String studentId) {
         try {
-            return aiService.getTestPercentToStudentSync(subject, questionNum, points, studentId) != null
-                    ? new Result(Code.GET_OK, aiService.getTestPercentToStudentSync(subject, questionNum
-                    , points, studentId), "查询成功!") : new Result(Code.GET_ERR, "查询失败!");
+            AiTestQuestions testPercentToStudentSync = aiService.getTestPercentToStudentSync(subject
+                    , questionNum, points, studentId);
+            return testPercentToStudentSync != null
+                    ? new Result(Code.GET_OK, testPercentToStudentSync, "查询成功!") :
+                    new Result(Code.GET_ERR, "查询失败!");
         } catch (Exception e) {
             return new Result(Code.POST_ERR, "网络错误!");
         }

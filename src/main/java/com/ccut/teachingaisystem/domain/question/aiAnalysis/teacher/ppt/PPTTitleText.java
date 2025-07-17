@@ -48,7 +48,6 @@ public class PPTTitleText {
 
     @Override
     public String toString() {
-        return "{\"title\":\"" + title + "\", \"points\":" + points
-                + ", \"time_allocation\":\"" + time_allocation + "\"}";
+        return new com.google.gson.Gson().toJson(this);
     }
 }

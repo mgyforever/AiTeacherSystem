@@ -134,8 +134,8 @@ public class UserController {
     public Result managerLogin(@RequestBody Managers managers) {
         try {
             return managerService.getPassword(managers)
-                    ? new Result(Code.POST_OK, "登录成功!") :
-                    new Result(Code.POST_ERR, "登录失败!");
+                    ? new Result(Code.POST_OK, "管理员登录成功!") :
+                    new Result(Code.POST_ERR, "管理员登录失败!");
         } catch (Exception e) {
             return new Result(Code.POST_ERR, "网络错误!");
         }
@@ -177,6 +177,29 @@ public class UserController {
             return studentService.insertStudentSubject(studentSubject)
                     ? new Result(Code.POST_OK, "添加成功!") :
                     new Result(Code.POST_ERR, "添加失败!");
+        } catch (Exception e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
+     * 添加用户功能记录
+     *
+     * @param userActions
+     * @return
+     */
+    @PostMapping("/insertUserActions")
+    public Result insertUserActions(@RequestBody UserActions userActions) {
+        try {
+            if (userActions.getJudge() == 1) {
+                return studentService.insertStudentActions(userActions)
+                        ? new Result(Code.POST_OK, "添加成功!") :
+                        new Result(Code.POST_ERR, "添加失败!");
+            } else {
+                return teacherService.insertTeacherActions(userActions)
+                        ? new Result(Code.POST_OK, "添加成功!") :
+                        new Result(Code.POST_ERR, "添加失败!");
+            }
         } catch (Exception e) {
             return new Result(Code.POST_ERR, "网络错误!");
         }
@@ -890,6 +913,65 @@ public class UserController {
         try {
             return managerService.getAllOperationLog() != null ? new Result(Code.GET_OK
                     , managerService.getAllOperationLog(), "查询成功!")
+                    : new Result(Code.GET_ERR, "查询失败!");
+        } catch (Exception e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
+     * 查询用户使用功能
+     *
+     * @param user_id
+     * @param judge
+     * @return
+     */
+    @GetMapping("/getUserActions")
+    public Result getUserActions(@RequestParam("user_id") String user_id
+            , @RequestParam("judge") int judge) {
+        try {
+            if (judge == 1) {
+                return studentService.selectStudentActionsByStudentId(user_id, 1) != null ? new Result(Code.GET_OK
+                        , studentService.selectStudentActionsByStudentId(user_id, 1), "查询成功!")
+                        : new Result(Code.GET_ERR, "查询失败!");
+            } else {
+                return teacherService.selectActionsByTeacherId(user_id, judge) != null ? new Result(Code.GET_OK
+                        , teacherService.selectActionsByTeacherId(user_id, judge), "查询成功!")
+                        : new Result(Code.GET_ERR, "查询失败!");
+            }
+        } catch (Exception e) {
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
+     * 获取所有用户的功能使用情况
+     *
+     * @return
+     */
+    @GetMapping("/getAllUsersActions")
+    public Result getAllUsersActions() {
+        try {
+            return managerService.getAllUserActions() != null
+                    ? new Result(Code.GET_OK, managerService.getAllUserActions(), "查询成功!")
+                    : new Result(Code.GET_ERR, "查询失败!");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new Result(Code.POST_ERR, "网络错误!");
+        }
+    }
+
+    /**
+     * 教师查询对应选课的学生功能使用情况
+     *
+     * @param teacher_id
+     * @return
+     */
+    @GetMapping("/getStudentActonsByTeacherId")
+    public Result getStudentActonsByTeacherId(@RequestParam("teacher_id") String teacher_id) {
+        try {
+            return teacherService.selectStudentActionsByTeacherId(teacher_id) != null ? new Result(Code.GET_OK
+                    , teacherService.selectStudentActionsByTeacherId(teacher_id), "查询成功!")
                     : new Result(Code.GET_ERR, "查询失败!");
         } catch (Exception e) {
             return new Result(Code.POST_ERR, "网络错误!");

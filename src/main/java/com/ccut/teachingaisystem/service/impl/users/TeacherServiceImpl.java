@@ -453,4 +453,40 @@ public class TeacherServiceImpl implements TeacherService {
         }
     }
 
+    @Override
+    public boolean insertTeacherActions(UserActions userActions) {
+        try {
+            return usersDao.insertUserAction(userActions) > 0;
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<UserActions> selectActionsByTeacherId(String Teacher_id, int judge) {
+        try {
+            return usersDao.selectTeacherActionsByUserId(Teacher_id, judge);
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<UserActions> selectStudentActionsByTeacherId(String Teacher_id) {
+        try {
+            String[] studentIds = usersDao.selectStudentIdsByTeacherId(Teacher_id);
+            List<UserActions> studentActions = new ArrayList<>();
+            for (String studentId : studentIds) {
+                List<UserActions> userActions = usersDao.selectStudentActionsByUserId(studentId, 1);
+                studentActions.addAll(userActions);
+            }
+            return studentActions;
+        } catch (Exception e) {
+            throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
+                    "系统错误!" + e.getMessage());
+        }
+    }
+
 }

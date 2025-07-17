@@ -37,4 +37,6 @@ public interface StudentService {
     boolean insertStudent(StudentUsers studentUsers);
     boolean insertStudentMessage(MultipartFile file);
     boolean insertStudentSubject(StudentSubject studentSubject);
+    boolean insertStudentActions(UserActions UserActions);
+    List<UserActions> selectStudentActionsByStudentId(String user_id, int judge);
 }
