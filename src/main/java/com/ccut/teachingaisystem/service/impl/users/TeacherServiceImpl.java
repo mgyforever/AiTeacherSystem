@@ -30,6 +30,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     private static final Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
 
+    @Value("${file.defaultImg-dir}")
+    private String defaultImgDir;
+
     @Value("${file.teacher-dir}")
     private String teacherDir;
 
@@ -221,9 +224,11 @@ public class TeacherServiceImpl implements TeacherService {
             int count = 0;
             boolean bl = true;
             for (TempUsers tempUser : tempUsers) {
-                flag[count] = usersDao.insertTeacherUsers(tempUser);
-                flag[count + 1] = usersDao.insertTeachersIdentify(tempUser);
-                count++;
+                String basePath = System.getProperty("user.dir") + File.separator;
+                String imgPath = basePath + defaultImgDir;
+                tempUser.setImg(imgPath);
+                flag[count++] = usersDao.insertTeacherUsers(tempUser);
+                flag[count++] = usersDao.insertTeachersIdentify(tempUser);
             }
             for (int i : flag) {
                 if (i <= 0) {
@@ -233,6 +238,7 @@ public class TeacherServiceImpl implements TeacherService {
             }
             return bl;
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }

@@ -36,6 +36,7 @@ file:
   image_dir: src/main/java/com/ccut/teachingaisystem/download/file/usersImage/
   log-dir: src/main/java/com/ccut/teachingaisystem/download/file/log/
   questionImg-dir: src/main/java/com/ccut/teachingaisystem/download/file/questionImg/
+  defaultImg-dir: src/main/resources/static/userImgs/f1c90710-3adc-47fb-a7c7-4e2b3b898fe2v2-f37c17fa026dfbb46df18af78ef09b1d_r.jpg
 myAi:
   service:
     ip: 100.125.72.218

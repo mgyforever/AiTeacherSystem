@@ -299,6 +299,7 @@ public class UserController {
                     ? new Result(Code.POST_OK, "添加成功!") :
                     new Result(Code.POST_ERR, "添加失败!");
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new Result(Code.GET_ERR, "网络错误!");
         }
     }

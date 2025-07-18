@@ -21,10 +21,10 @@ public interface UsersDao {
     @Insert("insert into ai_student_users (student_id, username, password, classroom, phoneNumber, img, email, year" +
             ", professional) values (#{student_id}, #{username}, #{password}, #{classroom},  #{phoneNumber}, #{img}" +
             ", #{email}, #{year}, #{professional});")
-    int insertAllStudentUserMessage(TempUsers studentUsers, String img);
+    int insertAllStudentUserMessage(TempUsers studentUsers);
 
-    @Insert("insert into ai_teacher_users (teacher_id, password, phoneNumber, subject, email, year, professional) " +
-            "VALUES (#{teacher_id}, #{password}, #{phoneNumber}, #{subject}, #{email}, #{year}, #{professional})")
+    @Insert("insert into ai_teacher_users (teacher_id, password, phoneNumber, subject, email, year, professional, img) " +
+            "VALUES (#{teacher_id}, #{password}, #{phoneNumber}, #{subject}, #{email}, #{year}, #{professional}, #{img})")
     int insertTeacherUsers(TempUsers tempUsers);
 
     @Select("select * from ai_student_users")

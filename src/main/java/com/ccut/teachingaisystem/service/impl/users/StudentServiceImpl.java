@@ -24,6 +24,9 @@ import java.util.UUID;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+    @Value("${file.defaultImg-dir}")
+    private String defaultImgDir;
+
     @Value("${file.image_dir}")
     private String imageDir;
 
@@ -388,16 +391,15 @@ public class StudentServiceImpl implements StudentService {
             int[] flag = new int[tempUsers.size() * 3];
             int count = 0;
             String basePath = System.getProperty("user.dir") + File.separator;
-            String imgPath = basePath + imageDir +
-                    "f1c90710-3adc-47fb-a7c7-4e2b3b898fe2v2-f37c17fa026dfbb46df18af78ef09b1d_r.jpg";
+            String imgPath = basePath + defaultImgDir;
             for (TempUsers tempUser : tempUsers) {
                 String userName = "用户" + tempUser.getPhoneNumber();
                 if (usersDao.selectIdByPhoneNumber(tempUser.getPhoneNumber()) == null) {
                     tempUser.setUserName(userName);
-                    flag[count] = usersDao.insertStudentMessage(tempUser);
-                    flag[++count] = usersDao.insertAllStudentUserMessage(tempUser, imgPath);
-                    flag[++count] = usersDao.insertStudentsIdentify(tempUser);
-                    count++;
+                    tempUser.setImg(imgPath);
+                    flag[count++] = usersDao.insertStudentMessage(tempUser);
+                    flag[count++] = usersDao.insertAllStudentUserMessage(tempUser);
+                    flag[count++] = usersDao.insertStudentsIdentify(tempUser);
                 }
             }
             System.out.println(Arrays.toString(flag));

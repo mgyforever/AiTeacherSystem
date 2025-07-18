@@ -218,7 +218,6 @@ public class AiServiceImpl implements AiService {
                 return aiQuestions;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }
@@ -592,8 +591,6 @@ public class AiServiceImpl implements AiService {
                 return aiTestQuestions;
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            log.error(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }
@@ -722,7 +719,6 @@ public class AiServiceImpl implements AiService {
             }
             return ChoiceAndBlankQuestions;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new SystemException(Code.SYSTEM_ERR, e.getCause(),
                     "系统错误!" + e.getMessage());
         }

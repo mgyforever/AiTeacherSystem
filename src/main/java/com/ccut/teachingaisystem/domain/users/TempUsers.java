@@ -19,6 +19,7 @@ public class TempUsers {
     String name;
     String sex;
     String IDNumber;
+    String img;
 
     public TempUsers() {
     }
@@ -195,6 +196,14 @@ public class TempUsers {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     @Override
